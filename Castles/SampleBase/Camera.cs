@@ -90,8 +90,6 @@ namespace Castles.SampleBase
 
             if (motionDir != Vector3.Zero)
             {
-                //Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
-
                 var direction = Vector3.Transform(
                     Vector3.Transform(
                         motionDir,
