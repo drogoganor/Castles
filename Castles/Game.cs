@@ -15,7 +15,7 @@ namespace Castles
 
         private GameResources gameResources;
 
-        private readonly VertexPositionTexture[] _vertices;
+        private readonly VertexPositionTexture2D[] vertices;
         private DeviceBuffer _projectionBuffer;
         private DeviceBuffer _viewBuffer;
         private DeviceBuffer _worldBuffer;
@@ -29,17 +29,17 @@ namespace Castles
 
         private InGameMenu inGameMenu;
         private GameMapReader gameMapReader;
-        private Camera camera;
+        private Camera2D camera;
 
         public Game(
             IApplicationWindow window,
-            Camera camera) : base(window, camera)
+            Camera2D camera) : base(window, camera)
         {
             this.camera = camera;
 
             gameMapReader = new GameMapReader("mapdemo2.json");
 
-            _vertices = gameMapReader.GetVertexArray();
+            vertices = gameMapReader.GetVertexArray();
 
             inGameMenu = new InGameMenu(window);
             inGameMenu.OnReturnToGame += InGameMenu_OnReturnToGame;
@@ -71,10 +71,10 @@ namespace Castles
             _viewBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
             _worldBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
 
-            if (_vertices != null)
+            if (vertices != null)
             {
-                _vertexBuffer = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture.SizeInBytes * _vertices.Length), BufferUsage.VertexBuffer));
-                GraphicsDevice.UpdateBuffer(_vertexBuffer, 0, _vertices);
+                _vertexBuffer = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture2D.SizeInBytes * vertices.Length), BufferUsage.VertexBuffer));
+                GraphicsDevice.UpdateBuffer(_vertexBuffer, 0, vertices);
             }
 
             _surfaceTextureView = gameResources.TextureView;
@@ -83,7 +83,7 @@ namespace Castles
                 new[]
                 {
                     new VertexLayoutDescription(
-                        new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
+                        new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
                         new VertexElementDescription("TexCoords", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3))
                 },
                 factory.CreateFromSpirv(
@@ -143,7 +143,7 @@ namespace Castles
 
             camera.Update(deltaSeconds);
 
-            if (_vertices == null)
+            if (vertices == null)
             {
                 return;
             }
@@ -152,19 +152,15 @@ namespace Castles
             _ticks += deltaSeconds * 1000f;
             _cl.Begin();
 
-            var projection = Matrix4x4.CreatePerspectiveFieldOfView(
-                1.0f,
-                (float)Window.Width / Window.Height,
+            var projection = Matrix4x4.CreateOrthographic(
+                Window.Width,
+                Window.Height,
                 0.5f,
                 1000f);
 
             _cl.UpdateBuffer(_projectionBuffer, 0, projection);
 
-            var direction = Vector3.Transform(
-                Vector3.Transform(
-                    Vector3.UnitZ,
-                    Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, camera.Pitch)),
-                Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, -camera.Yaw));
+            var direction = new Vector3(0, 0, 1f);
 
             var view = Matrix4x4.CreateLookAt(camera.Position, camera.Position + direction, Vector3.UnitY);
 
@@ -181,7 +177,7 @@ namespace Castles
             //_cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
             _cl.SetGraphicsResourceSet(0, _projViewSet);
             _cl.SetGraphicsResourceSet(1, _worldTextureSet);
-            _cl.Draw((uint)_vertices.Length);
+            _cl.Draw((uint)vertices.Length);
             //_cl.DrawIndexed(36, 1, 0, 0, 0);
 
             _cl.End();
@@ -208,13 +204,13 @@ layout(set = 1, binding = 0) uniform WorldBuffer
     mat4 World;
 };
 
-layout(location = 0) in vec3 Position;
+layout(location = 0) in vec2 Position;
 layout(location = 1) in vec3 TexCoords;
 layout(location = 0) out vec3 fsin_texCoords;
 
 void main()
 {
-    vec4 worldPosition = World * vec4(Position, 1);
+    vec4 worldPosition = World * vec4(Position, 1, 1);
     vec4 viewPosition = View * worldPosition;
     vec4 clipPosition = Projection * viewPosition;
     gl_Position = clipPosition;

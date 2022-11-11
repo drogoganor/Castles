@@ -2,36 +2,41 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Text.Json;
+using Veldrid;
 
 namespace Castles
 {
     public class GameMapReader
     {
-        private GameMap _gameMap;
+        private GameMap gameMap;
+
         public GameMapReader(string filename)
         {
             var contentDir = Path.Combine(AppContext.BaseDirectory, "Content");
             var mapJsonFilePath = Path.Combine(contentDir, filename);
             var mapJsonText = File.ReadAllText(mapJsonFilePath);
-            _gameMap = JsonSerializer.Deserialize<GameMap>(mapJsonText);
+            gameMap = JsonSerializer.Deserialize<GameMap>(mapJsonText);
         }
 
-        public VertexPositionTexture[] GetVertexArray()
+        public VertexPositionTexture2D[] GetVertexArray()
         {
-            var vertexList = new List<VertexPositionTexture>();
-            foreach (var block in _gameMap.Blocks)
+            var vertexList = new List<VertexPositionTexture2D>();
+            foreach (var block in gameMap.Tiles)
             {
-                var faceIndex = 0;
-                foreach (var faceTexture in block.FaceTextures)
-                {
-                    if (faceTexture != 0)
+                vertexList.AddRange(
+                    new VertexPositionTexture2D[]
                     {
-                        vertexList.AddRange(Cube.GetFaceVertices((CubeFace)faceIndex, block.Position, faceTexture));
+                        // Back
+                        new VertexPositionTexture2D(block.Position + new Vector2(32f, +32f), new Vector3(0, 0, block.Texture)),
+                        new VertexPositionTexture2D(block.Position + new Vector2(-32f, +32f), new Vector3(1, 0, block.Texture)),
+                        new VertexPositionTexture2D(block.Position + new Vector2(-32f, -32f), new Vector3(1, 1, block.Texture)),
+                        new VertexPositionTexture2D(block.Position + new Vector2(+32f, +32f), new Vector3(0, 0, block.Texture)),
+                        new VertexPositionTexture2D(block.Position + new Vector2(-32f, -32f), new Vector3(1, 1, block.Texture)),
+                        new VertexPositionTexture2D(block.Position + new Vector2(+32f, -32f), new Vector3(0, 1, block.Texture)),
                     }
-
-                    faceIndex++;
-                }
+                );
             }
 
             return vertexList.ToArray();

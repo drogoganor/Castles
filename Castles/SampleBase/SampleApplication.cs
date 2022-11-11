@@ -11,7 +11,7 @@ namespace Castles.SampleBase
     {
         private readonly Dictionary<Type, BinaryAssetSerializer> _serializers = DefaultSerializers.Get();
 
-        protected Camera _camera;
+        protected Camera2D _camera;
 
         public IApplicationWindow Window { get; }
         public GraphicsDevice GraphicsDevice { get; private set; }
@@ -20,7 +20,7 @@ namespace Castles.SampleBase
 
         public SampleApplication(
             IApplicationWindow window,
-            Camera camera)
+            Camera2D camera)
         {
             Window = window;
             Window.Resized += HandleWindowResize;

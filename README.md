@@ -21,6 +21,7 @@ This project's aim is to create a complete game, however simple, with the follow
 	* For actors:
 		* Enemy, item, Perhaps Door and Movable depending on how we want to do it
 	* World-invisible items like spawn location, light, trigger, etc.
+* Saving/loading
 * Player control with keyboard or controller
 * Controllable camera - respect map boundaries
 * Audio

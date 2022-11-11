@@ -29,7 +29,7 @@ namespace Castles
                 .SingleInstance();
 
             builder
-                .RegisterType<Camera>()
+                .RegisterType<Camera2D>()
                 .AsSelf()
                 .AsImplementedInterfaces()
                 .SingleInstance();

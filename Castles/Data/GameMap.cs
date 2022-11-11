@@ -9,15 +9,8 @@ namespace Castles.Data
     {
         public string Name { get; set; } = string.Empty;
 
-        [JsonConverter(typeof(JsonConverterVector3))]
-        public Vector3 Size { get; set; }
-        public MapBlock[] Blocks { get; set; } = Array.Empty<MapBlock>();
-    }
-
-    public class MapBlock
-    {
-        [JsonConverter(typeof(JsonConverterVector3))]
-        public Vector3 Position { get; set; }
-        public int[] FaceTextures { get; set; }
+        [JsonConverter(typeof(JsonConverterVector2))]
+        public Vector2 Size { get; set; }
+        public MapTile[] Tiles { get; set; } = Array.Empty<MapTile>();
     }
 }
