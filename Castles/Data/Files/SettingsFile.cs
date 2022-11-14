@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Castles.Data
 {
-    public class Settings
+    public class SettingsFile
     {
         [JsonConverter(typeof(JsonConverterVector2))]
         public Vector2 ScreenResolution { get; set; }

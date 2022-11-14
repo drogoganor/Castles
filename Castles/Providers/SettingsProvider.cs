@@ -8,14 +8,14 @@ namespace Castles.Providers
 {
     public interface ISettingsProvider
     {
-        Settings Settings { get; }
+        SettingsFile Settings { get; }
     }
 
     public class SettingsProvider : ISettingsProvider
     {
-        private readonly Settings settings;
+        private readonly SettingsFile settings;
 
-        public Settings Settings => settings;
+        public SettingsFile Settings => settings;
 
         public SettingsProvider()
         {
@@ -27,7 +27,7 @@ namespace Castles.Providers
                 using var sr = new StreamReader(fs, Encoding.UTF8);
                 string content = sr.ReadToEnd();
 
-                settings = JsonSerializer.Deserialize<Settings>(content);
+                settings = JsonSerializer.Deserialize<SettingsFile>(content);
             }
             else
             {
@@ -35,7 +35,7 @@ namespace Castles.Providers
             }
         }
 
-        public Settings GetSettings()
+        public SettingsFile GetSettings()
         {
             return settings;
         }

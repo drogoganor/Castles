@@ -123,16 +123,14 @@ namespace Castles.SampleBase
                 throw new InvalidOperationException("No serializer registered for type " + typeof(T).Name);
             }
 
-            using (Stream stream = GetType().Assembly.GetManifestResourceStream(name))
+            using Stream stream = GetType().Assembly.GetManifestResourceStream(name);
+            if (stream == null)
             {
-                if (stream == null)
-                {
-                    throw new InvalidOperationException("No embedded asset with the name " + name);
-                }
-
-                BinaryReader reader = new BinaryReader(stream);
-                return (T)serializer.Read(reader);
+                throw new InvalidOperationException("No embedded asset with the name " + name);
             }
+
+            BinaryReader reader = new BinaryReader(stream);
+            return (T)serializer.Read(reader);
         }
     }
 }

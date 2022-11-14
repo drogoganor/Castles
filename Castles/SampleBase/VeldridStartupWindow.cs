@@ -1,18 +1,18 @@
-﻿using System;
+﻿using Castles.Providers;
+using System;
 using System.Diagnostics;
 using Veldrid;
 using Veldrid.Sdl2;
-using Veldrid.StartupUtilities;
 using Veldrid.Utilities;
 
 namespace Castles.SampleBase
 {
     public class VeldridStartupWindow : IApplicationWindow
     {
-        private readonly Sdl2Window _window;
-        private GraphicsDevice _gd;
-        private DisposeCollectorResourceFactory _factory;
-        private bool _windowResized = true;
+        private readonly Sdl2Window window;
+        private readonly GraphicsDevice graphicsDevice;
+        private DisposeCollectorResourceFactory factory;
+        private bool windowResized = true;
 
         public event Action<float> Rendering;
         public event Action<GraphicsDevice, ResourceFactory, Swapchain> GraphicsDeviceCreated;
@@ -20,66 +20,50 @@ namespace Castles.SampleBase
         public event Action Resized;
         public event Action<KeyEvent> KeyPressed;
 
-        public uint Width => (uint)_window.Width;
-        public uint Height => (uint)_window.Height;
+        public uint Width => (uint)window.Width;
+        public uint Height => (uint)window.Height;
 
         public SamplePlatformType PlatformType => SamplePlatformType.Desktop;
 
-        public VeldridStartupWindow()
+        public VeldridStartupWindow(
+            Sdl2WindowProvider sdl2WindowProvider,
+            GraphicsDeviceProvider graphicsDeviceProvider)
         {
-            var wci = new WindowCreateInfo
+            window = sdl2WindowProvider.Window;
+            window.Resized += () =>
             {
-                X = 100,
-                Y = 100,
-                WindowWidth = 1024,
-                WindowHeight = 720,
-                WindowTitle = "Castles",
+                windowResized = true;
             };
 
-            _window = VeldridStartup.CreateWindow(ref wci);
-            _window.Resized += () =>
-            {
-                _windowResized = true;
-            };
+            window.KeyDown += OnKeyDown;
 
-            _window.KeyDown += OnKeyDown;
+            graphicsDevice = graphicsDeviceProvider.GraphicsDevice;
         }
 
         public void Run()
         {
-            var options = new GraphicsDeviceOptions(
-                debug: false,
-                swapchainDepthFormat: PixelFormat.R16_UNorm,
-                syncToVerticalBlank: true,
-                resourceBindingModel: ResourceBindingModel.Improved,
-                preferDepthRangeZeroToOne: true,
-                preferStandardClipSpaceYDirection: true);
-#if DEBUG
-            options.Debug = true;
-#endif
-            _gd = VeldridStartup.CreateGraphicsDevice(_window, options, GraphicsBackend.Direct3D11);
-            _factory = new DisposeCollectorResourceFactory(_gd.ResourceFactory);
+            factory = new DisposeCollectorResourceFactory(graphicsDevice.ResourceFactory);
 
-            GraphicsDeviceCreated?.Invoke(_gd, _factory, _gd.MainSwapchain);
+            GraphicsDeviceCreated?.Invoke(graphicsDevice, factory, graphicsDevice.MainSwapchain);
 
             var sw = Stopwatch.StartNew();
             var previousElapsed = sw.Elapsed.TotalSeconds;
 
-            while (_window.Exists)
+            while (window.Exists)
             {
                 double newElapsed = sw.Elapsed.TotalSeconds;
                 float deltaSeconds = (float)(newElapsed - previousElapsed);
 
-                var inputSnapshot = _window.PumpEvents();
+                var inputSnapshot = window.PumpEvents();
                 InputTracker.UpdateFrameInput(inputSnapshot);
 
-                if (_window.Exists)
+                if (window.Exists)
                 {
                     previousElapsed = newElapsed;
-                    if (_windowResized)
+                    if (windowResized)
                     {
-                        _windowResized = false;
-                        _gd.ResizeMainWindow((uint)_window.Width, (uint)_window.Height);
+                        windowResized = false;
+                        graphicsDevice.ResizeMainWindow((uint)window.Width, (uint)window.Height);
                         Resized?.Invoke();
                     }
 
@@ -87,9 +71,9 @@ namespace Castles.SampleBase
                 }
             }
 
-            _gd.WaitForIdle();
-            _factory.DisposeCollector.DisposeAll();
-            _gd.Dispose();
+            graphicsDevice.WaitForIdle();
+            factory.DisposeCollector.DisposeAll();
+            graphicsDevice.Dispose();
             GraphicsDeviceDestroyed?.Invoke();
         }
 
@@ -100,7 +84,7 @@ namespace Castles.SampleBase
 
         public void Close()
         {
-            _window.Close();
+            window.Close();
         }
     }
 }

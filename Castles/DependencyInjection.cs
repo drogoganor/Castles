@@ -24,6 +24,36 @@ namespace Castles
                 .SingleInstance();
 
             builder
+                .RegisterType<ModManifestProvider>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<Sdl2WindowProvider>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<GraphicsDeviceProvider>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<GameResourcesProvider>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<GameMapProvider>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
                 .RegisterType<VeldridStartupWindow>()
                 .As<IApplicationWindow>()
                 .SingleInstance();

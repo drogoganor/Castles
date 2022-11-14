@@ -1,34 +1,32 @@
 ﻿using Castles.AssetPrimitives;
-using Castles.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
 using Veldrid;
 
-namespace Castles
+namespace Castles.Providers
 {
-    public class GameResources
+    public class GameResourcesProvider
     {
-        public Texture Texture { get; set; }
-        public TextureView TextureView { get; set; }
-        private GraphicsDevice graphicsDevice;
-        private ResourceFactory resourceFactory;
+        public Texture Texture { get; private set; }
+        public TextureView TextureView { get; private set; }
 
-        public GameResources(GraphicsDevice gd, ResourceFactory rf)
+        private readonly GraphicsDevice graphicsDevice;
+        private readonly ResourceFactory resourceFactory;
+
+        public GameResourcesProvider(
+            GraphicsDeviceProvider graphicsDeviceProvider,
+            ModManifestProvider modManifestProvider)
         {
-            graphicsDevice = gd;
-            resourceFactory = rf;
+            graphicsDevice = graphicsDeviceProvider.GraphicsDevice;
+            resourceFactory = graphicsDeviceProvider.GraphicsDevice.ResourceFactory;
 
             var imageSharpProcessor = new ImageSharpProcessor();
-
             var contentDir = Path.Combine(AppContext.BaseDirectory, "Content");
-            var textureJsonFilePath = Path.Combine(contentDir, "textures.json");
-            var textureJson = File.ReadAllText(textureJsonFilePath);
-            var textureFiles = JsonSerializer.Deserialize<TextureFiles>(textureJson);
+            var modManifest = modManifestProvider.ModManifestFile;
 
             var processedTextures = new List<ProcessedTexture>();
-            foreach (var texture in textureFiles.Textures)
+            foreach (var texture in modManifest.Textures)
             {
                 var textureFilePath = Path.Combine(contentDir, texture.Filename);
                 var processedTexture = LoadFileAsset<ProcessedTexture>(textureFilePath, imageSharpProcessor);

@@ -13,8 +13,10 @@
   <ItemGroup>
     <None Remove="Content\mapcity.json" />
     <None Remove="Content\mapdemo2.json" />
+    <None Remove="Content\mod.json" />
     <None Remove="Content\settings.json" />
-    <None Remove="Content\textures.json" />
+    <None Remove="Content\shader\World.frag.spv" />
+    <None Remove="Content\shader\World.vert.spv" />
     <None Remove="Content\textures\bricks1.png" />
     <None Remove="Content\textures\grass.png" />
     <None Remove="Content\textures\pavement1.png" />
@@ -34,7 +36,13 @@
     <Content Include="Content\settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\textures.json">
+    <Content Include="Content\shader\World.frag.spv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\shader\World.vert.spv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\mod.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\textures\bricks1.png">
@@ -69,10 +77,6 @@
     <PackageReference Include="Veldrid.SPIRV" Version="1.0.15" />
     <PackageReference Include="Veldrid.StartupUtilities" Version="4.9.0-beta2" />
     <PackageReference Include="Veldrid.Utilities" Version="4.9.0-beta2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Providers\" />
   </ItemGroup>
 
 </Project>

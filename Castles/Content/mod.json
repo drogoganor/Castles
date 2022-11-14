@@ -1,4 +1,7 @@
 {
+  "Name": "Castles",
+  "TileSize": 24,
+  "Campaigns": [],
   "Textures": [
     {
       "ID": 1,

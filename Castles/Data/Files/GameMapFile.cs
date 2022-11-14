@@ -3,9 +3,9 @@ using System.Numerics;
 using System.Text.Json.Serialization;
 using Castles.Data.Json;
 
-namespace Castles.Data
+namespace Castles.Data.Files
 {
-    public class GameMap
+    public class GameMapFile
     {
         public string Name { get; set; } = string.Empty;
 

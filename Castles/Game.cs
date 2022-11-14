@@ -1,9 +1,10 @@
 ﻿using Castles.Data;
+using Castles.Providers;
 using Castles.SampleBase;
 using Castles.UI;
 using System;
+using System.IO;
 using System.Numerics;
-using System.Text;
 using Veldrid;
 using Veldrid.SPIRV;
 
@@ -13,7 +14,8 @@ namespace Castles
     {
         public Action OnEndGame;
 
-        private GameResources gameResources;
+        private ModManifestProvider modManifestProvider;
+        private GameResourcesProvider gameResourcesProvider;
 
         private readonly VertexPositionTexture2D[] vertices;
         private DeviceBuffer _projectionBuffer;
@@ -28,18 +30,21 @@ namespace Castles
         private float _ticks;
 
         private InGameMenu inGameMenu;
-        private GameMapReader gameMapReader;
+        private GameMapProvider gameMapProvider;
         private Camera2D camera;
 
         public Game(
             IApplicationWindow window,
-            Camera2D camera) : base(window, camera)
+            Camera2D camera,
+            ModManifestProvider modManifestProvider,
+            GameResourcesProvider gameResourcesProvider,
+            GameMapProvider gameMapProvider) : base(window, camera)
         {
             this.camera = camera;
+            this.gameResourcesProvider = gameResourcesProvider;
+            this.modManifestProvider = modManifestProvider;
 
-            gameMapReader = new GameMapReader("mapdemo2.json");
-
-            vertices = gameMapReader.GetVertexArray();
+            vertices = gameMapProvider.GetVertexArray();
 
             inGameMenu = new InGameMenu(window);
             inGameMenu.OnReturnToGame += InGameMenu_OnReturnToGame;
@@ -65,8 +70,6 @@ namespace Castles
 
         protected unsafe override void CreateResources(ResourceFactory factory)
         {
-            gameResources = new GameResources(GraphicsDevice, ResourceFactory);
-
             _projectionBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
             _viewBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
             _worldBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
@@ -77,7 +80,11 @@ namespace Castles
                 GraphicsDevice.UpdateBuffer(_vertexBuffer, 0, vertices);
             }
 
-            _surfaceTextureView = gameResources.TextureView;
+            _surfaceTextureView = gameResourcesProvider.TextureView;
+
+            var shadersPath = Path.Combine(Environment.CurrentDirectory, @"Content/shader");
+            var vertexShaderBytes = File.ReadAllBytes(Path.Combine(shadersPath, "World.vert.spv"));
+            var fragmentShaderBytes = File.ReadAllBytes(Path.Combine(shadersPath, "World.frag.spv"));
 
             ShaderSetDescription shaderSet = new ShaderSetDescription(
                 new[]
@@ -87,8 +94,8 @@ namespace Castles
                         new VertexElementDescription("TexCoords", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3))
                 },
                 factory.CreateFromSpirv(
-                    new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(VertexCode), "main"),
-                    new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(FragmentCode), "main")));
+                    new ShaderDescription(ShaderStages.Vertex, vertexShaderBytes, "main"),
+                    new ShaderDescription(ShaderStages.Fragment, fragmentShaderBytes, "main")));
 
             ResourceLayout projViewLayout = factory.CreateResourceLayout(
                 new ResourceLayoutDescription(
@@ -185,50 +192,5 @@ namespace Castles
             GraphicsDevice.SwapBuffers(MainSwapchain);
             GraphicsDevice.WaitForIdle();
         }
-
-        private const string VertexCode = @"
-#version 450
-
-layout(set = 0, binding = 0) uniform ProjectionBuffer
-{
-    mat4 Projection;
-};
-
-layout(set = 0, binding = 1) uniform ViewBuffer
-{
-    mat4 View;
-};
-
-layout(set = 1, binding = 0) uniform WorldBuffer
-{
-    mat4 World;
-};
-
-layout(location = 0) in vec2 Position;
-layout(location = 1) in vec3 TexCoords;
-layout(location = 0) out vec3 fsin_texCoords;
-
-void main()
-{
-    vec4 worldPosition = World * vec4(Position, 1, 1);
-    vec4 viewPosition = View * worldPosition;
-    vec4 clipPosition = Projection * viewPosition;
-    gl_Position = clipPosition;
-    fsin_texCoords = TexCoords;
-}";
-
-        private const string FragmentCode = @"
-#version 450
-
-layout(location = 0) in vec3 fsin_texCoords;
-layout(location = 0) out vec4 fsout_color;
-
-layout(set = 1, binding = 1) uniform texture2DArray SurfaceTexture;
-layout(set = 1, binding = 2) uniform sampler SurfaceSampler;
-
-void main()
-{
-    fsout_color =  texture(sampler2DArray(SurfaceTexture, SurfaceSampler), fsin_texCoords);
-}";
     }
 }
