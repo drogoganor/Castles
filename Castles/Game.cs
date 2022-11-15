@@ -1,4 +1,5 @@
 ﻿using Castles.Data;
+using Castles.Interfaces;
 using Castles.Providers;
 using Castles.SampleBase;
 using Castles.UI;
@@ -10,7 +11,7 @@ using Veldrid.SPIRV;
 
 namespace Castles
 {
-    public class Game : SampleApplication
+    public class Game : BaseGame
     {
         public Action OnEndGame;
 
@@ -18,16 +19,15 @@ namespace Castles
         private GameResourcesProvider gameResourcesProvider;
 
         private readonly VertexPositionTexture2D[] vertices;
-        private DeviceBuffer _projectionBuffer;
-        private DeviceBuffer _viewBuffer;
-        private DeviceBuffer _worldBuffer;
-        private DeviceBuffer _vertexBuffer;
-        private CommandList _cl;
-        private Pipeline _pipeline;
-        private ResourceSet _projViewSet;
-        private ResourceSet _worldTextureSet;
-        private TextureView _surfaceTextureView;
-        private float _ticks;
+        private DeviceBuffer projectionBuffer;
+        private DeviceBuffer viewBuffer;
+        private DeviceBuffer worldBuffer;
+        private DeviceBuffer vertexBuffer;
+        private CommandList commandList;
+        private Pipeline pipeline;
+        private ResourceSet projectionViewSet;
+        private ResourceSet worldTextureSet;
+        private TextureView surfaceTextureView;
 
         private InGameMenu inGameMenu;
         private GameMapProvider gameMapProvider;
@@ -38,7 +38,7 @@ namespace Castles
             Camera2D camera,
             ModManifestProvider modManifestProvider,
             GameResourcesProvider gameResourcesProvider,
-            GameMapProvider gameMapProvider) : base(window, camera)
+            GameMapProvider gameMapProvider) : base(window)
         {
             this.camera = camera;
             this.gameResourcesProvider = gameResourcesProvider;
@@ -70,17 +70,17 @@ namespace Castles
 
         protected unsafe override void CreateResources(ResourceFactory factory)
         {
-            _projectionBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
-            _viewBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
-            _worldBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+            projectionBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+            viewBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+            worldBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
 
             if (vertices != null)
             {
-                _vertexBuffer = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture2D.SizeInBytes * vertices.Length), BufferUsage.VertexBuffer));
-                GraphicsDevice.UpdateBuffer(_vertexBuffer, 0, vertices);
+                vertexBuffer = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture2D.SizeInBytes * vertices.Length), BufferUsage.VertexBuffer));
+                GraphicsDevice.UpdateBuffer(vertexBuffer, 0, vertices);
             }
 
-            _surfaceTextureView = gameResourcesProvider.TextureView;
+            surfaceTextureView = gameResourcesProvider.TextureView;
 
             var shadersPath = Path.Combine(Environment.CurrentDirectory, @"Content/shader");
             var vertexShaderBytes = File.ReadAllBytes(Path.Combine(shadersPath, "World.vert.spv"));
@@ -108,7 +108,7 @@ namespace Castles
                     new ResourceLayoutElementDescription("SurfaceTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
                     new ResourceLayoutElementDescription("SurfaceSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
 
-            _pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
+            pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
                 BlendStateDescription.SingleOverrideBlend,
                 DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerStateDescription.Default,
@@ -117,19 +117,23 @@ namespace Castles
                 new[] { projViewLayout, worldTextureLayout },
                 MainSwapchain.Framebuffer.OutputDescription));
 
-            _projViewSet = factory.CreateResourceSet(new ResourceSetDescription(
+            projectionViewSet = factory.CreateResourceSet(new ResourceSetDescription(
                 projViewLayout,
-                _projectionBuffer,
-                _viewBuffer));
+                projectionBuffer,
+                viewBuffer));
 
-            _worldTextureSet = factory.CreateResourceSet(new ResourceSetDescription(
+            worldTextureSet = factory.CreateResourceSet(new ResourceSetDescription(
                 worldTextureLayout,
-                _worldBuffer,
-                _surfaceTextureView,
+                worldBuffer,
+                surfaceTextureView,
                 GraphicsDevice.Aniso4xSampler));
 
-            _cl = factory.CreateCommandList();
+            commandList = factory.CreateCommandList();
+        }
 
+        protected override void HandleWindowResize()
+        {
+            camera.WindowResized(Window.Width, Window.Height);
         }
 
         protected override void OnDeviceDestroyed()
@@ -155,9 +159,7 @@ namespace Castles
                 return;
             }
 
-            // Render
-            _ticks += deltaSeconds * 1000f;
-            _cl.Begin();
+            commandList.Begin();
 
             var projection = Matrix4x4.CreateOrthographic(
                 Window.Width,
@@ -165,30 +167,27 @@ namespace Castles
                 0.5f,
                 1000f);
 
-            _cl.UpdateBuffer(_projectionBuffer, 0, projection);
+            commandList.UpdateBuffer(projectionBuffer, 0, projection);
 
             var direction = new Vector3(0, 0, 1f);
 
             var view = Matrix4x4.CreateLookAt(camera.Position, camera.Position + direction, Vector3.UnitY);
 
-            _cl.UpdateBuffer(_viewBuffer, 0, view);
-            //_cl.UpdateBuffer(_viewBuffer, 0, Matrix4x4.CreateRotationX(0.785398f) * Matrix4x4.CreateRotationY(0.523599f));
+            commandList.UpdateBuffer(viewBuffer, 0, view);
 
-            _cl.UpdateBuffer(_worldBuffer, 0, Matrix4x4.Identity);
+            commandList.UpdateBuffer(worldBuffer, 0, Matrix4x4.Identity);
 
-            _cl.SetFramebuffer(MainSwapchain.Framebuffer);
-            _cl.ClearColorTarget(0, RgbaFloat.Black);
-            _cl.ClearDepthStencil(1f);
-            _cl.SetPipeline(_pipeline);
-            _cl.SetVertexBuffer(0, _vertexBuffer);
-            //_cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
-            _cl.SetGraphicsResourceSet(0, _projViewSet);
-            _cl.SetGraphicsResourceSet(1, _worldTextureSet);
-            _cl.Draw((uint)vertices.Length);
-            //_cl.DrawIndexed(36, 1, 0, 0, 0);
+            commandList.SetFramebuffer(MainSwapchain.Framebuffer);
+            commandList.ClearColorTarget(0, RgbaFloat.Black);
+            commandList.ClearDepthStencil(1f);
+            commandList.SetPipeline(pipeline);
+            commandList.SetVertexBuffer(0, vertexBuffer);
+            commandList.SetGraphicsResourceSet(0, projectionViewSet);
+            commandList.SetGraphicsResourceSet(1, worldTextureSet);
+            commandList.Draw((uint)vertices.Length);
 
-            _cl.End();
-            GraphicsDevice.SubmitCommands(_cl);
+            commandList.End();
+            GraphicsDevice.SubmitCommands(commandList);
             GraphicsDevice.SwapBuffers(MainSwapchain);
             GraphicsDevice.WaitForIdle();
         }

@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using Castles.SampleBase;
 using Veldrid;
+using Castles.Interfaces;
 
 namespace Castles.UI
 {

@@ -1,4 +1,4 @@
-﻿using Castles.SampleBase;
+﻿using Castles.Interfaces;
 using Castles.UI;
 
 namespace Castles

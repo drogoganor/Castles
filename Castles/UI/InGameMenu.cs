@@ -1,7 +1,7 @@
 ﻿using ImGuiNET;
-using Castles.SampleBase;
 using System.Numerics;
 using System;
+using Castles.Interfaces;
 
 namespace Castles.UI
 {

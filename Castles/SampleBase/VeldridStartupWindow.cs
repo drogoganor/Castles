@@ -1,4 +1,6 @@
-﻿using Castles.Providers;
+﻿using Castles.Enums;
+using Castles.Interfaces;
+using Castles.Providers;
 using System;
 using System.Diagnostics;
 using Veldrid;
@@ -23,7 +25,7 @@ namespace Castles.SampleBase
         public uint Width => (uint)window.Width;
         public uint Height => (uint)window.Height;
 
-        public SamplePlatformType PlatformType => SamplePlatformType.Desktop;
+        public PlatformType PlatformType => PlatformType.Desktop;
 
         public VeldridStartupWindow(
             Sdl2WindowProvider sdl2WindowProvider,

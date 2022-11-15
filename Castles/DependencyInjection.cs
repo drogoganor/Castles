@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Castles.Interfaces;
 using Castles.Providers;
 using Castles.SampleBase;
 using Castles.UI;

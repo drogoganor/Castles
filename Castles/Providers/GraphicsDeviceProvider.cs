@@ -1,16 +1,13 @@
 ﻿using Veldrid;
 using Veldrid.StartupUtilities;
-using Veldrid.Utilities;
 
 namespace Castles.Providers
 {
     public class GraphicsDeviceProvider
     {
         private readonly GraphicsDevice graphicsDevice;
-        private readonly DisposeCollectorResourceFactory resourceFactory;
 
         public GraphicsDevice GraphicsDevice => graphicsDevice;
-        public ResourceFactory ResourceFactory => resourceFactory;
 
         public GraphicsDeviceProvider(Sdl2WindowProvider sdl2WindowProvider)
         {

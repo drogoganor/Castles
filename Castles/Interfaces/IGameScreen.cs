@@ -1,4 +1,4 @@
-﻿namespace Castles.SampleBase
+﻿namespace Castles.Interfaces
 {
     public interface IGameScreen
     {

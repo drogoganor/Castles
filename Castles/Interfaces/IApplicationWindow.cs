@@ -1,11 +1,12 @@
 ﻿using System;
+using Castles.Enums;
 using Veldrid;
 
-namespace Castles.SampleBase
+namespace Castles.Interfaces
 {
     public interface IApplicationWindow
     {
-        SamplePlatformType PlatformType { get; }
+        PlatformType PlatformType { get; }
 
         event Action<float> Rendering;
         event Action<GraphicsDevice, ResourceFactory, Swapchain> GraphicsDeviceCreated;
