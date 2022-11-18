@@ -11,7 +11,7 @@ using Veldrid.SPIRV;
 
 namespace Castles
 {
-    public class Game : BaseGame
+    public class Game : GameScreen
     {
         public Action OnEndGame;
 

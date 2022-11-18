@@ -5,13 +5,8 @@ using Castles.Interfaces;
 
 namespace Castles.UI
 {
-    public abstract class Menu : IGameScreen
+    public abstract class Menu : GameScreen
     {
-        public IApplicationWindow Window { get; }
-        public GraphicsDevice GraphicsDevice { get; private set; }
-        public ResourceFactory ResourceFactory { get; private set; }
-        public Swapchain MainSwapchain { get; private set; }
-
         private ImGuiRenderer imGuiRenderer;
         private CommandList commandList;
         private bool isShown;
@@ -20,24 +15,16 @@ namespace Castles.UI
         protected virtual string GetTitle() => GetType().Name;
         protected ImFontPtr? font;
 
-        public Menu(IApplicationWindow window)
+        public Menu(IApplicationWindow window) : base(window)
         {
-            Window = window;
-            Window.Resized += HandleWindowResize;
-            Window.GraphicsDeviceCreated += OnGraphicsDeviceCreated;
-            Window.GraphicsDeviceDestroyed += OnDeviceDestroyed;
         }
 
-        public void OnGraphicsDeviceCreated(GraphicsDevice gd, ResourceFactory factory, Swapchain sc)
+        protected override void CreateResources(ResourceFactory factory)
         {
-            GraphicsDevice = gd;
-            ResourceFactory = factory;
-            MainSwapchain = sc;
-
-            commandList = gd.ResourceFactory.CreateCommandList();
+            commandList = ResourceFactory.CreateCommandList();
             imGuiRenderer = new ImGuiRenderer(
-                gd,
-                gd.MainSwapchain.Framebuffer.OutputDescription,
+                GraphicsDevice,
+                GraphicsDevice.MainSwapchain.Framebuffer.OutputDescription,
                 (int)Window.Width,
                 (int)Window.Height);
 
@@ -45,37 +32,47 @@ namespace Castles.UI
             imGuiRenderer.RecreateFontDeviceTexture();
         }
 
-        public void Show()
+        //public void OnGraphicsDeviceCreated(GraphicsDevice gd, ResourceFactory factory, Swapchain sc)
+        //{
+        //    GraphicsDevice = gd;
+        //    ResourceFactory = factory;
+        //    MainSwapchain = sc;
+
+        //    commandList = gd.ResourceFactory.CreateCommandList();
+        //    imGuiRenderer = new ImGuiRenderer(
+        //        gd,
+        //        gd.MainSwapchain.Framebuffer.OutputDescription,
+        //        (int)Window.Width,
+        //        (int)Window.Height);
+
+        //    font = ImGui.GetIO().Fonts.AddFontFromFileTTF(@"C:\Windows\Fonts\ARIAL.TTF", 26);
+        //    imGuiRenderer.RecreateFontDeviceTexture();
+        //}
+
+        public override void Show()
         {
             isShown = true;
-            Window.Rendering += PreDraw;
-            Window.Rendering += Draw;
+            base.Show();
         }
 
-        public void Hide()
+        public override void Hide()
         {
             isShown = false;
-            Window.Rendering -= PreDraw;
-            Window.Rendering -= Draw;
+            base.Hide();
         }
 
-        protected virtual void OnDeviceDestroyed()
-        {
-            Hide();
-            Window.Resized -= HandleWindowResize;
-            Window.GraphicsDeviceCreated -= OnGraphicsDeviceCreated;
-            Window.GraphicsDeviceDestroyed -= OnDeviceDestroyed;
+         
 
-            GraphicsDevice = null;
-            ResourceFactory = null;
-            MainSwapchain = null;
+        protected override void OnDeviceDestroyed()
+        {
+            base.OnDeviceDestroyed();
 
             imGuiRenderer = null;
             commandList = null;
             font = null;
         }
 
-        private void PreDraw(float deltaSeconds)
+        protected void PreDraw(float deltaSeconds)
         {
             if (imGuiRenderer == null) return;
 
@@ -83,7 +80,7 @@ namespace Castles.UI
             imGuiRenderer.Update(1f / 60f, inputSnapshot);
         }
 
-        protected virtual void Draw(float deltaSeconds)
+        protected override void Draw(float deltaSeconds)
         {
             if (imGuiRenderer == null) return;
             if (commandList == null) return;
@@ -101,7 +98,7 @@ namespace Castles.UI
             }
         }
 
-        protected virtual void HandleWindowResize()
+        protected override void HandleWindowResize()
         {
             if (imGuiRenderer == null) return;
 

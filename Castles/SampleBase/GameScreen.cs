@@ -3,14 +3,14 @@ using Veldrid;
 
 namespace Castles.SampleBase
 {
-    public abstract class BaseGame : IGameScreen
+    public abstract class GameScreen : IGameScreen
     {
-        public IApplicationWindow Window { get; }
+        protected IApplicationWindow Window { get; }
         protected GraphicsDevice GraphicsDevice { get; private set; }
         protected ResourceFactory ResourceFactory { get; private set; }
         protected Swapchain MainSwapchain { get; private set; }
 
-        public BaseGame(IApplicationWindow window)
+        public GameScreen(IApplicationWindow window)
         {
             Window = window;
             Window.Resized += HandleWindowResize;
@@ -18,13 +18,13 @@ namespace Castles.SampleBase
             Window.GraphicsDeviceDestroyed += OnDeviceDestroyed;
         }
 
-        public void Show()
+        public virtual void Show()
         {
             Window.Rendering += Draw;
             Window.KeyPressed += OnKeyDown;
         }
 
-        public void Hide()
+        public virtual void Hide()
         {
             Window.Rendering -= Draw;
             Window.KeyPressed -= OnKeyDown;
@@ -40,6 +40,10 @@ namespace Castles.SampleBase
 
         protected virtual void OnDeviceDestroyed()
         {
+            Hide();
+            Window.Resized -= HandleWindowResize;
+            Window.GraphicsDeviceCreated -= OnGraphicsDeviceCreated;
+            Window.GraphicsDeviceDestroyed -= OnDeviceDestroyed;
             GraphicsDevice = null;
             ResourceFactory = null;
             MainSwapchain = null;

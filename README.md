@@ -31,3 +31,8 @@ This project's aim is to create a complete game, however simple, with the follow
 * Inventory display (but not management)
 
 I decided to start this project after a previous attempt at a 3D game engine became too ambitious, and the code quality was not up to par. It didn't employ IoC or DI and wasn't structured in a robust way employing SOLID principles strongly enough.
+
+Task List
+* [x] Setup game creation using DI and IoC
+* [ ] Create 'StartGameProvider' and set values when starting a new game
+* [ ] Create 'GameSessionProvider' as a transient/scoped object, injecting StartGameProvider

@@ -28,6 +28,8 @@ namespace Castles.UI
 
         protected override void Draw(float deltaSeconds)
         {
+            PreDraw(deltaSeconds);
+
             var windowSize = new Vector2(Window.Width, Window.Height);
             var menuSize = new Vector2(400, 600);
             var menuPadding = 40f;
