@@ -9,27 +9,32 @@ using Veldrid;
 
 namespace Castles
 {
-    public class GameClient : GameScreen, IGameClient
+    /// <summary>
+    /// TODO: Refactor input handling
+    /// </summary>
+    public class GameClient : IGameClient
     {
         public Action OnEndGame;
 
-        private ModManifestProvider modManifestProvider;
-        private GameResourcesProvider gameResourcesProvider;
+        private readonly ModManifestProvider modManifestProvider;
+        private readonly GameResourcesProvider gameResourcesProvider;
 
         private readonly Scene scene;
 
-        private MainMenu mainMenu;
-        private InGameMenu inGameMenu;
+        private readonly MainMenu mainMenu;
+        private readonly InGameMenu inGameMenu;
+        private readonly IApplicationWindow window;
 
         public GameClient(
             IApplicationWindow window,
             ModManifestProvider modManifestProvider,
             GameResourcesProvider gameResourcesProvider,
             MainMenu mainMenu,
-            Scene scene) : base(window)
+            Scene scene)
         {
             this.gameResourcesProvider = gameResourcesProvider;
             this.modManifestProvider = modManifestProvider;
+            this.window = window;
             this.scene = scene;
 
             this.mainMenu = mainMenu;
@@ -37,7 +42,18 @@ namespace Castles
             inGameMenu = new InGameMenu(modManifestProvider, window);
             inGameMenu.OnReturnToGame += InGameMenu_OnReturnToGame;
             inGameMenu.OnEndGame += InGameMenu_OnEndGame;
-            this.mainMenu = mainMenu;
+
+            window.KeyPressed += Window_KeyPressed;
+        }
+
+        private void Window_KeyPressed(KeyEvent obj)
+        {
+            // TODO: Should check if we're in the game
+            // Amongst other things...
+            if (obj.Key == Key.Escape)
+            {
+                ShowInGameMenu();
+            }
         }
 
         public void Run()
@@ -46,62 +62,35 @@ namespace Castles
             mainMenu.OnNewGame += () =>
             {
                 mainMenu.Hide();
-                Show();
                 scene.Show();
                 OnEndGame += () =>
                 {
-                    Hide();
                     scene.Hide();
                     mainMenu.Show();
                 };
             };
 
-            Window.Run();
+            window.Run();
+
+            inGameMenu.OnReturnToGame -= InGameMenu_OnReturnToGame;
+            inGameMenu.OnEndGame -= InGameMenu_OnEndGame;
         }
 
         private void InGameMenu_OnEndGame()
         {
-            Hide();
             scene.Hide();
             OnEndGame?.Invoke();
         }
 
         private void ShowInGameMenu()
         {
-            Hide();
             scene.Hide();
             inGameMenu.Show();
         }
 
         private void InGameMenu_OnReturnToGame()
         {
-            Show();
             scene.Show();
-        }
-
-        protected unsafe override void CreateResources(ResourceFactory factory)
-        {
-        }
-
-        protected override void HandleWindowResize()
-        {
-        }
-
-        protected override void OnDeviceDestroyed()
-        {
-            base.OnDeviceDestroyed();
-
-            inGameMenu.OnReturnToGame -= InGameMenu_OnReturnToGame;
-            inGameMenu.OnEndGame -= InGameMenu_OnEndGame;
-        }
-
-        protected override void Draw(float deltaSeconds)
-        {
-            // TODO: Place in Update/PreDraw
-            if (InputTracker.GetKey(Key.Escape))
-            {
-                ShowInGameMenu();
-            }
         }
     }
 }
