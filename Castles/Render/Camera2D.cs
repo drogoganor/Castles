@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Veldrid;
 
-namespace Castles.SampleBase
+namespace Castles.Render
 {
     public class Camera2D
     {

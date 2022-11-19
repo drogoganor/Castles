@@ -2,6 +2,7 @@
 using System.Numerics;
 using System;
 using Castles.Interfaces;
+using Castles.Providers;
 
 namespace Castles.UI
 {
@@ -9,7 +10,9 @@ namespace Castles.UI
     {
         public event Action OnNewGame;
 
-        public MainMenu(IApplicationWindow window) : base(window)
+        public MainMenu(
+            ModManifestProvider modManifestProvider,
+            IApplicationWindow window) : base(modManifestProvider, window)
         {
         }
 

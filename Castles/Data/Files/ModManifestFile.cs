@@ -13,5 +13,12 @@ namespace Castles.Data
         public int TileSize { get; set; }
         public string[] Campaigns { get; set; }
         public TileTextureFile[] Textures { get; set; }
+        public ModMenuFonts Fonts { get; set; }
+    }
+
+    public class ModMenuFonts
+    {
+        public string FontName { get; set; }
+        public int FontSize { get; set; }
     }
 }

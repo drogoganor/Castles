@@ -2,22 +2,24 @@
 using Castles.Interfaces;
 using Castles.Providers;
 using Castles.SampleBase;
-using Castles.UI;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
 using Veldrid;
 using Veldrid.SPIRV;
+using Vulkan;
 
-namespace Castles
+namespace Castles.Render
 {
-    public class Game : GameScreen
+    public class Scene : GameScreen
     {
-        public Action OnEndGame;
-
-        private ModManifestProvider modManifestProvider;
         private GameResourcesProvider gameResourcesProvider;
-
+        private GameMapProvider gameMapProvider;
+        private Camera2D camera;
         private readonly VertexPositionTexture2D[] vertices;
         private DeviceBuffer projectionBuffer;
         private DeviceBuffer viewBuffer;
@@ -29,46 +31,20 @@ namespace Castles
         private ResourceSet worldTextureSet;
         private TextureView surfaceTextureView;
 
-        private InGameMenu inGameMenu;
-        private GameMapProvider gameMapProvider;
-        private Camera2D camera;
-
-        public Game(
+        public Scene(
             IApplicationWindow window,
             Camera2D camera,
-            ModManifestProvider modManifestProvider,
             GameResourcesProvider gameResourcesProvider,
             GameMapProvider gameMapProvider) : base(window)
         {
             this.camera = camera;
             this.gameResourcesProvider = gameResourcesProvider;
-            this.modManifestProvider = modManifestProvider;
+            this.gameMapProvider = gameMapProvider;
 
             vertices = gameMapProvider.GetVertexArray();
-
-            inGameMenu = new InGameMenu(window);
-            inGameMenu.OnReturnToGame += InGameMenu_OnReturnToGame;
-            inGameMenu.OnEndGame += InGameMenu_OnEndGame;
         }
 
-        private void InGameMenu_OnEndGame()
-        {
-            Hide();
-            OnEndGame?.Invoke();
-        }
-
-        private void ShowInGameMenu()
-        {
-            Hide();
-            inGameMenu.Show();
-        }
-
-        private void InGameMenu_OnReturnToGame()
-        {
-            Show();
-        }
-
-        protected unsafe override void CreateResources(ResourceFactory factory)
+        protected override void CreateResources(ResourceFactory factory)
         {
             projectionBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
             viewBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
@@ -131,27 +107,8 @@ namespace Castles
             commandList = factory.CreateCommandList();
         }
 
-        protected override void HandleWindowResize()
-        {
-            camera.WindowResized(Window.Width, Window.Height);
-        }
-
-        protected override void OnDeviceDestroyed()
-        {
-            base.OnDeviceDestroyed();
-
-            inGameMenu.OnReturnToGame -= InGameMenu_OnReturnToGame;
-            inGameMenu.OnEndGame -= InGameMenu_OnEndGame;
-        }
-
         protected override void Draw(float deltaSeconds)
         {
-            // TODO: Place in Update/PreDraw
-            if (InputTracker.GetKey(Key.Escape))
-            {
-                ShowInGameMenu();
-            }
-
             camera.Update(deltaSeconds);
 
             if (vertices == null)
@@ -190,6 +147,11 @@ namespace Castles
             GraphicsDevice.SubmitCommands(commandList);
             GraphicsDevice.SwapBuffers(MainSwapchain);
             GraphicsDevice.WaitForIdle();
+        }
+
+        protected override void HandleWindowResize()
+        {
+            camera.WindowResized(Window.Width, Window.Height);
         }
     }
 }

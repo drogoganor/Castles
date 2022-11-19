@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Castles.Interfaces;
 using Castles.Providers;
+using Castles.Render;
 using Castles.SampleBase;
 using Castles.UI;
 
@@ -8,15 +9,9 @@ namespace Castles
 {
     public static class DependencyInjection
     {
-        public static IContainer Build()
+        public static ContainerBuilder Build()
         {
             var builder = new ContainerBuilder();
-
-            builder
-                .RegisterType<Startup>()
-                .AsSelf()
-                .AsImplementedInterfaces()
-                .SingleInstance();
 
             builder
                 .RegisterType<SettingsProvider>()
@@ -72,7 +67,7 @@ namespace Castles
                 .SingleInstance();
 
             builder
-                .RegisterType<Game>()
+                .RegisterType<Scene>()
                 .AsSelf()
                 .AsImplementedInterfaces()
                 .SingleInstance();
@@ -87,7 +82,7 @@ namespace Castles
             //       .Where(t => t.Name.EndsWith("Repository"))
             //       .AsImplementedInterfaces();
 
-            return builder.Build();
+            return builder;
         }
     }
 }

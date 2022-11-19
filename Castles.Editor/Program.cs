@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using Castles;
-using Castles.Game;
+using Castles.Editor;
 
 var builder = Castles.DependencyInjection.Build();
-var container = builder.BuildGameClient();
+var container = builder.BuildEditorClient();
 var client = container.Resolve<GameClient>();
 client.Run();

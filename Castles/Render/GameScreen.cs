@@ -1,7 +1,7 @@
 ﻿using Castles.Interfaces;
 using Veldrid;
 
-namespace Castles.SampleBase
+namespace Castles.Render
 {
     public abstract class GameScreen : IGameScreen
     {

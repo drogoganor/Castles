@@ -2,6 +2,8 @@
 using Castles.SampleBase;
 using Veldrid;
 using Castles.Interfaces;
+using Castles.Providers;
+using Castles.Render;
 
 namespace Castles.UI
 {
@@ -14,9 +16,16 @@ namespace Castles.UI
 
         protected virtual string GetTitle() => GetType().Name;
         protected ImFontPtr? font;
+        private readonly string fontName;
+        private readonly int fontSize;
 
-        public Menu(IApplicationWindow window) : base(window)
+        public Menu(
+            ModManifestProvider modManifestProvider,
+            IApplicationWindow window) : base(window)
         {
+            var fonts = modManifestProvider.ModManifestFile.Fonts;
+            fontName = fonts.FontName;
+            fontSize = fonts.FontSize;
         }
 
         protected override void CreateResources(ResourceFactory factory)
@@ -28,26 +37,9 @@ namespace Castles.UI
                 (int)Window.Width,
                 (int)Window.Height);
 
-            font = ImGui.GetIO().Fonts.AddFontFromFileTTF(@"C:\Windows\Fonts\ARIAL.TTF", 26);
+            font = ImGui.GetIO().Fonts.AddFontFromFileTTF(@"C:\Windows\Fonts\" + fontName, fontSize);
             imGuiRenderer.RecreateFontDeviceTexture();
         }
-
-        //public void OnGraphicsDeviceCreated(GraphicsDevice gd, ResourceFactory factory, Swapchain sc)
-        //{
-        //    GraphicsDevice = gd;
-        //    ResourceFactory = factory;
-        //    MainSwapchain = sc;
-
-        //    commandList = gd.ResourceFactory.CreateCommandList();
-        //    imGuiRenderer = new ImGuiRenderer(
-        //        gd,
-        //        gd.MainSwapchain.Framebuffer.OutputDescription,
-        //        (int)Window.Width,
-        //        (int)Window.Height);
-
-        //    font = ImGui.GetIO().Fonts.AddFontFromFileTTF(@"C:\Windows\Fonts\ARIAL.TTF", 26);
-        //    imGuiRenderer.RecreateFontDeviceTexture();
-        //}
 
         public override void Show()
         {

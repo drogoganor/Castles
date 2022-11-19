@@ -2,34 +2,38 @@
   "Name": "Castles",
   "TileSize": 24,
   "Campaigns": [],
+  "Fonts": {
+    "FontName": "ARIAL.TTF",
+    "FontSize": 26
+  },
   "Textures": [
     {
       "ID": 1,
-      "Filename": "textures\\placeholder-grey1.png"
+      "Filename": "placeholder-grey1.png"
     },
     {
       "ID": 2,
-      "Filename": "textures\\placeholder-grey2.png"
+      "Filename": "placeholder-grey2.png"
     },
     {
       "ID": 3,
-      "Filename": "textures\\placeholder-window1.png"
+      "Filename": "placeholder-window1.png"
     },
     {
       "ID": 4,
-      "Filename": "textures\\bricks1.png"
+      "Filename": "bricks1.png"
     },
     {
       "ID": 5,
-      "Filename": "textures\\grass.png"
+      "Filename": "grass.png"
     },
     {
       "ID": 6,
-      "Filename": "textures\\road1.png"
+      "Filename": "road1.png"
     },
     {
       "ID": 7,
-      "Filename": "textures\\pavement1.png"
+      "Filename": "pavement1.png"
     }
   ]
 }

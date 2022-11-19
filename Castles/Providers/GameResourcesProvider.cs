@@ -28,7 +28,7 @@ namespace Castles.Providers
             var processedTextures = new List<ProcessedTexture>();
             foreach (var texture in modManifest.Textures)
             {
-                var textureFilePath = Path.Combine(contentDir, texture.Filename);
+                var textureFilePath = Path.Combine(Path.Combine(contentDir, "textures"), texture.Filename);
                 var processedTexture = LoadFileAsset<ProcessedTexture>(textureFilePath, imageSharpProcessor);
                 processedTextures.Add(processedTexture);
             }
