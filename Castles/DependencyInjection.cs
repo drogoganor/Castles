@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Castles.Data;
 using Castles.Interfaces;
 using Castles.Providers;
 using Castles.Render;
@@ -12,6 +13,12 @@ namespace Castles
         public static ContainerBuilder Build()
         {
             var builder = new ContainerBuilder();
+
+            builder
+                .RegisterType<FileSystem>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
 
             builder
                 .RegisterType<SettingsProvider>()

@@ -34,5 +34,5 @@ I decided to start this project after a previous attempt at a 3D game engine bec
 
 Task List
 * [x] Setup game creation using DI and IoC
-* [ ] Create 'StartGameProvider' and set values when starting a new game
-* [ ] Create 'GameSessionProvider' as a transient/scoped object, injecting StartGameProvider
+* [ ] Editor New Map UI
+* [ ] Editor UI

@@ -16,19 +16,18 @@ namespace Castles.Providers
 
         public GameResourcesProvider(
             GraphicsDeviceProvider graphicsDeviceProvider,
-            ModManifestProvider modManifestProvider)
+            ModManifestProvider modManifestProvider,
+            IFileSystem fileSystem)
         {
             graphicsDevice = graphicsDeviceProvider.GraphicsDevice;
             resourceFactory = graphicsDeviceProvider.GraphicsDevice.ResourceFactory;
 
             var imageSharpProcessor = new ImageSharpProcessor();
-            var contentDir = Path.Combine(AppContext.BaseDirectory, "Content");
             var modManifest = modManifestProvider.ModManifestFile;
-
             var processedTextures = new List<ProcessedTexture>();
             foreach (var texture in modManifest.Textures)
             {
-                var textureFilePath = Path.Combine(Path.Combine(contentDir, "textures"), texture.Filename);
+                var textureFilePath = Path.Combine(fileSystem.TextureDirectory, texture.Filename);
                 var processedTexture = LoadFileAsset<ProcessedTexture>(textureFilePath, imageSharpProcessor);
                 processedTextures.Add(processedTexture);
             }

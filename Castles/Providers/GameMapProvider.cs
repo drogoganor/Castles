@@ -1,6 +1,5 @@
 ﻿using Castles.Data;
 using Castles.Data.Files;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
@@ -15,11 +14,12 @@ namespace Castles.Providers
 
         public GameMapFile GameMap => gameMap;
 
-        public GameMapProvider(ModManifestProvider modManifestProvider)
+        public GameMapProvider(
+            ModManifestProvider modManifestProvider,
+            IFileSystem fileSystem)
         {
             this.modManifestProvider = modManifestProvider;
-            var contentDir = Path.Combine(AppContext.BaseDirectory, "Content");
-            var mapJsonFilePath = Path.Combine(contentDir, "mapdemo2.json");
+            var mapJsonFilePath = Path.Combine(fileSystem.MapDirectory, "testmap.json");
             var mapJsonText = File.ReadAllText(mapJsonFilePath);
             gameMap = JsonSerializer.Deserialize<GameMapFile>(mapJsonText);
         }
@@ -30,16 +30,17 @@ namespace Castles.Providers
             var vertexList = new List<VertexPositionTexture2D>();
             foreach (var block in gameMap.Tiles)
             {
+                var scaledPosition = block.Position * modManifestProvider.ModManifestFile.TileSize;
                 vertexList.AddRange(
                     new VertexPositionTexture2D[]
                     {
                         // Back
-                        new VertexPositionTexture2D(block.Position + new Vector2(tileSize, tileSize), new Vector3(0, 0, block.Texture)),
-                        new VertexPositionTexture2D(block.Position + new Vector2(0, tileSize), new Vector3(1, 0, block.Texture)),
-                        new VertexPositionTexture2D(block.Position + new Vector2(0, 0), new Vector3(1, 1, block.Texture)),
-                        new VertexPositionTexture2D(block.Position + new Vector2(tileSize, tileSize), new Vector3(0, 0, block.Texture)),
-                        new VertexPositionTexture2D(block.Position + new Vector2(0, 0), new Vector3(1, 1, block.Texture)),
-                        new VertexPositionTexture2D(block.Position + new Vector2(tileSize, 0), new Vector3(0, 1, block.Texture)),
+                        new VertexPositionTexture2D(scaledPosition + new Vector2(tileSize, tileSize), new Vector3(0, 0, block.Texture)),
+                        new VertexPositionTexture2D(scaledPosition + new Vector2(0, tileSize), new Vector3(1, 0, block.Texture)),
+                        new VertexPositionTexture2D(scaledPosition + new Vector2(0, 0), new Vector3(1, 1, block.Texture)),
+                        new VertexPositionTexture2D(scaledPosition + new Vector2(tileSize, tileSize), new Vector3(0, 0, block.Texture)),
+                        new VertexPositionTexture2D(scaledPosition + new Vector2(0, 0), new Vector3(1, 1, block.Texture)),
+                        new VertexPositionTexture2D(scaledPosition + new Vector2(tileSize, 0), new Vector3(0, 1, block.Texture)),
                     }
                 );
             }

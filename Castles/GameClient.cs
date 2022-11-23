@@ -39,6 +39,9 @@ namespace Castles
 
             this.mainMenu = mainMenu;
 
+            mainMenu.OnNewGame += HandleNewGame;
+            OnEndGame += HandleEndGame;
+
             inGameMenu = new InGameMenu(modManifestProvider, window);
             inGameMenu.OnReturnToGame += InGameMenu_OnReturnToGame;
             inGameMenu.OnEndGame += InGameMenu_OnEndGame;
@@ -59,21 +62,22 @@ namespace Castles
         public void Run()
         {
             mainMenu.Show();
-            mainMenu.OnNewGame += () =>
-            {
-                mainMenu.Hide();
-                scene.Show();
-                OnEndGame += () =>
-                {
-                    scene.Hide();
-                    mainMenu.Show();
-                };
-            };
-
             window.Run();
 
             inGameMenu.OnReturnToGame -= InGameMenu_OnReturnToGame;
             inGameMenu.OnEndGame -= InGameMenu_OnEndGame;
+        }
+
+        private void HandleEndGame()
+        {
+            scene.Hide();
+            mainMenu.Show();
+        }
+
+        private void HandleNewGame()
+        {
+            mainMenu.Hide();
+            scene.Show();
         }
 
         private void InGameMenu_OnEndGame()

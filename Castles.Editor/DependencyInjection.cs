@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Castles.UI;
 
 namespace Castles.Editor
 {
@@ -7,7 +8,13 @@ namespace Castles.Editor
         public static IContainer BuildEditorClient(this ContainerBuilder builder)
         {
             builder
-                .RegisterType<GameClient>()
+                .RegisterType<EditorMainMenu>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<EditorClient>()
                 .AsSelf()
                 .AsImplementedInterfaces()
                 .SingleInstance();

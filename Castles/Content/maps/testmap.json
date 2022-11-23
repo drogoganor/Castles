@@ -11,6 +11,13 @@
         0
       ],
       "Texture": 1
+    },
+    {
+      "Position": [
+        1,
+        0
+      ],
+      "Texture": 0
     }
   ]
 }
