@@ -62,13 +62,13 @@ namespace Castles.UI
                 ImGui.SetCursorPosX(menuPadding / 2f);
                 if (ImGui.Button("New Map", buttonSize))
                 {
-                    OnNewMap();
+                    HandleNewMap();
                 }
 
                 ImGui.SetCursorPosX(menuPadding / 2f);
                 if (ImGui.Button("Edit Map", buttonSize))
                 {
-                    OnEditMap();
+                    HandleEditMap();
                 }
 
                 ImGui.SetCursorPosX(menuPadding / 2f);

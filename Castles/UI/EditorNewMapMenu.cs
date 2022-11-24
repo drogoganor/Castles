@@ -3,12 +3,19 @@ using System.Numerics;
 using System;
 using Castles.Interfaces;
 using Castles.Providers;
+using Castles.Data.Files;
 
 namespace Castles.UI
 {
     public class EditorNewMapMenu : Menu
     {
-        public event Action OnNewMap;
+        private const uint MAX_FILENAME = 128;
+        private string filename = "test";
+        private int sizeX = 128;
+        private int sizeY = 128;
+
+        public event Action<GameMapFileHeader> OnCreateNewMap;
+        public event Action OnCancelNewMap;
 
         public EditorNewMapMenu(
             ModManifestProvider modManifestProvider,
@@ -16,16 +23,20 @@ namespace Castles.UI
         {
         }
 
-        private void NewMap()
+        private void HandleCreateNewMap()
         {
             Hide();
-            OnNewMap?.Invoke();
+            OnCreateNewMap?.Invoke(new GameMapFileHeader
+            {
+                Name = filename,
+                Size = new Vector2(sizeX, sizeY),
+            });
         }
 
-        private void CancelNewMap()
+        private void HandleCancelNewMap()
         {
             Hide();
-            Window.Close();
+            OnCancelNewMap?.Invoke();
         }
 
         protected override void Draw(float deltaSeconds)
@@ -35,7 +46,7 @@ namespace Castles.UI
             var windowSize = new Vector2(Window.Width, Window.Height);
             var menuSize = new Vector2(400, 600);
             var menuPadding = 40f;
-            var buttonSize = new Vector2(menuSize.X - menuPadding, 32);
+            var buttonSize = new Vector2((menuSize.X / 2), 32);
             ImGui.SetNextWindowSize(menuSize);
 
             var menuPos = (windowSize - menuSize) / 2;
@@ -50,19 +61,30 @@ namespace Castles.UI
                 ImGuiWindowFlags.NoMove |
                 ImGuiWindowFlags.NoResize))
             {
-                HorizontallyCenteredText("Castles", menuSize.X);
+                HorizontallyCenteredText("New Map", menuSize.X);
 
                 ImGui.SetCursorPosX(menuPadding / 2f);
-                if (ImGui.Button("New Game", buttonSize))
-                {
-                    NewMap();
-                }
+                ImGui.InputText("Filename", ref filename, MAX_FILENAME);
 
                 ImGui.SetCursorPosX(menuPadding / 2f);
-                if (ImGui.Button("Quit", buttonSize))
+                ImGui.InputInt2("Size", ref sizeX);
+
+                ImGui.SetCursorPosX(menuPadding / 2f);
+                ImGui.BeginGroup();
+
+                if (ImGui.Button("OK", buttonSize))
                 {
-                    CancelNewMap();
+                    HandleCreateNewMap();
                 }
+
+                ImGui.SameLine();
+
+                if (ImGui.Button("Cancel", buttonSize))
+                {
+                    HandleCancelNewMap();
+                }
+
+                ImGui.EndGroup();
             }
 
             base.Draw(deltaSeconds);

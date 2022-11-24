@@ -1,9 +1,11 @@
 {
-  "Name": "Generated Map",
-  "Size": [
-    64,
-    64
-  ],
+  "Header": {
+    "Name": "Generated Map",
+    "Size": [
+      64,
+      64
+    ]
+  },
   "Tiles": [
     {
       "Position": [

@@ -14,6 +14,12 @@ namespace Castles.Editor
                 .SingleInstance();
 
             builder
+                .RegisterType<EditorNewMapMenu>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
                 .RegisterType<EditorClient>()
                 .AsSelf()
                 .AsImplementedInterfaces()

@@ -36,3 +36,4 @@ Task List
 * [x] Setup game creation using DI and IoC
 * [ ] Editor New Map UI
 * [ ] Editor UI
+* [ ] i18n

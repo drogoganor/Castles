@@ -1,17 +1,11 @@
 ﻿using Castles.Data;
 using Castles.Interfaces;
 using Castles.Providers;
-using Castles.SampleBase;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using Veldrid;
 using Veldrid.SPIRV;
-using Vulkan;
 
 namespace Castles.Render
 {
