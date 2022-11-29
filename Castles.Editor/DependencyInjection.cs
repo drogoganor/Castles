@@ -20,6 +20,12 @@ namespace Castles.Editor
                 .SingleInstance();
 
             builder
+                .RegisterType<EditorUI>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
                 .RegisterType<EditorClient>()
                 .AsSelf()
                 .AsImplementedInterfaces()

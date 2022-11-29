@@ -129,7 +129,7 @@ namespace Castles.Render
             commandList.UpdateBuffer(worldBuffer, 0, Matrix4x4.Identity);
 
             commandList.SetFramebuffer(MainSwapchain.Framebuffer);
-            commandList.ClearColorTarget(0, RgbaFloat.Black);
+            //commandList.ClearColorTarget(0, RgbaFloat.Black);
             commandList.ClearDepthStencil(1f);
             commandList.SetPipeline(pipeline);
             commandList.SetVertexBuffer(0, vertexBuffer);
@@ -139,8 +139,6 @@ namespace Castles.Render
 
             commandList.End();
             GraphicsDevice.SubmitCommands(commandList);
-            GraphicsDevice.SwapBuffers(MainSwapchain);
-            GraphicsDevice.WaitForIdle();
         }
 
         protected override void HandleWindowResize()

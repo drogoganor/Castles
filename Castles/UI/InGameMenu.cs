@@ -3,6 +3,7 @@ using System.Numerics;
 using System;
 using Castles.Interfaces;
 using Castles.Providers;
+using Castles.Enums;
 
 namespace Castles.UI
 {
@@ -41,7 +42,7 @@ namespace Castles.UI
 
             var menuPos = (windowSize - menuSize) / 2;
             ImGui.SetNextWindowPos(menuPos);
-            ImGui.PushFont(font.Value);
+            ImGui.PushFont(Fonts[FontSize.Large].Value);
 
             if (ImGui.Begin("Main Menu",
                 ImGuiWindowFlags.NoTitleBar |

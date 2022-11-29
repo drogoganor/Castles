@@ -1,9 +1,6 @@
 ﻿using Castles.Data.Files;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Castles.Enums;
+using System.Text.Json.Serialization;
 
 namespace Castles.Data
 {
@@ -13,11 +10,13 @@ namespace Castles.Data
         public int TileSize { get; set; }
         public string[] Campaigns { get; set; }
         public TileTextureFile[] Textures { get; set; }
-        public ModMenuFonts Fonts { get; set; }
+        public ModMenuFont[] Fonts { get; set; }
     }
 
-    public class ModMenuFonts
+    public class ModMenuFont
     {
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public FontSize SizeEnum { get; set; }
         public string FontName { get; set; }
         public int FontSize { get; set; }
     }

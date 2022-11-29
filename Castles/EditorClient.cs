@@ -14,10 +14,9 @@ namespace Castles
         private readonly ModManifestProvider modManifestProvider;
         private readonly GameResourcesProvider gameResourcesProvider;
 
-        private readonly Scene scene;
-
         private readonly EditorMainMenu mainMenu;
         private readonly EditorNewMapMenu newMapMenu;
+        private readonly EditorUI editorUI;
         private readonly IApplicationWindow window;
 
         public EditorClient(
@@ -26,15 +25,15 @@ namespace Castles
             GameResourcesProvider gameResourcesProvider,
             EditorMainMenu mainMenu,
             EditorNewMapMenu newMapMenu,
-            Scene scene)
+            EditorUI editorUI)
         {
             this.gameResourcesProvider = gameResourcesProvider;
             this.modManifestProvider = modManifestProvider;
             this.window = window;
-            this.scene = scene;
 
             this.mainMenu = mainMenu;
             this.newMapMenu = newMapMenu;
+            this.editorUI = editorUI;
 
             mainMenu.OnNewMap += HandleNewMap;
             OnEndGame += HandleEndGame;
@@ -46,6 +45,7 @@ namespace Castles
         {
             // TODO: Create new map file and save
             // Then create new editor gamestate
+            editorUI.Show();
         }
 
         private void NewMapMenu_OnCancelNewMap()
@@ -61,7 +61,6 @@ namespace Castles
 
         private void HandleEndGame()
         {
-            scene.Hide();
             mainMenu.Show();
         }
 

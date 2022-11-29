@@ -4,28 +4,29 @@ using Veldrid;
 using Castles.Interfaces;
 using Castles.Providers;
 using Castles.Render;
+using System.Collections.Generic;
+using Castles.Enums;
 
 namespace Castles.UI
 {
     public abstract class Menu : GameScreen
     {
+        private readonly ModManifestProvider modManifestProvider;
+
         private ImGuiRenderer imGuiRenderer;
         private CommandList commandList;
         private bool isShown;
         private InputSnapshot inputSnapshot;
 
         protected virtual string GetTitle() => GetType().Name;
-        protected ImFontPtr? font;
-        private readonly string fontName;
-        private readonly int fontSize;
+
+        protected Dictionary<FontSize, ImFontPtr?> Fonts = new();
 
         public Menu(
             ModManifestProvider modManifestProvider,
             IApplicationWindow window) : base(window)
         {
-            var fonts = modManifestProvider.ModManifestFile.Fonts;
-            fontName = fonts.FontName;
-            fontSize = fonts.FontSize;
+            this.modManifestProvider = modManifestProvider;
         }
 
         protected override void CreateResources(ResourceFactory factory)
@@ -37,7 +38,11 @@ namespace Castles.UI
                 (int)Window.Width,
                 (int)Window.Height);
 
-            font = ImGui.GetIO().Fonts.AddFontFromFileTTF(@"C:\Windows\Fonts\" + fontName, fontSize);
+            foreach (var font in modManifestProvider.ModManifestFile.Fonts)
+            {
+                Fonts.Add(font.SizeEnum, ImGui.GetIO().Fonts.AddFontFromFileTTF(@"C:\Windows\Fonts\" + font.FontName, font.FontSize));
+            }
+
             imGuiRenderer.RecreateFontDeviceTexture();
         }
 
@@ -53,15 +58,13 @@ namespace Castles.UI
             base.Hide();
         }
 
-         
-
         protected override void OnDeviceDestroyed()
         {
             base.OnDeviceDestroyed();
 
             imGuiRenderer = null;
             commandList = null;
-            font = null;
+            Fonts.Clear();
         }
 
         protected void PreDraw(float deltaSeconds)
@@ -82,11 +85,10 @@ namespace Castles.UI
             {
                 commandList.Begin();
                 commandList.SetFramebuffer(GraphicsDevice.MainSwapchain.Framebuffer);
-                commandList.ClearColorTarget(0, new RgbaFloat(0, 0, 0.2f, 1f));
+                commandList.ClearColorTarget(0, RgbaFloat.Black);
                 imGuiRenderer.Render(GraphicsDevice, commandList);
                 commandList.End();
                 GraphicsDevice.SubmitCommands(commandList);
-                GraphicsDevice.SwapBuffers(GraphicsDevice.MainSwapchain);
             }
         }
 

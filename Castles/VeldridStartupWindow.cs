@@ -17,6 +17,7 @@ namespace Castles.SampleBase
         private bool windowResized = true;
 
         public event Action<float> Rendering;
+        public event Action PostRender;
         public event Action<GraphicsDevice, ResourceFactory, Swapchain> GraphicsDeviceCreated;
         public event Action GraphicsDeviceDestroyed;
         public event Action Resized;
@@ -70,6 +71,7 @@ namespace Castles.SampleBase
                     }
 
                     Rendering?.Invoke(deltaSeconds);
+                    PostRender?.Invoke();
                 }
             }
 

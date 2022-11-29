@@ -21,12 +21,14 @@ namespace Castles.Render
         public virtual void Show()
         {
             Window.Rendering += Draw;
+            Window.PostRender += PostDraw;
             Window.KeyPressed += OnKeyDown;
         }
 
         public virtual void Hide()
         {
             Window.Rendering -= Draw;
+            Window.PostRender -= PostDraw;
             Window.KeyPressed -= OnKeyDown;
         }
 
@@ -52,6 +54,12 @@ namespace Castles.Render
         protected abstract void CreateResources(ResourceFactory factory);
 
         protected abstract void Draw(float deltaSeconds);
+
+        protected virtual void PostDraw()
+        {
+            GraphicsDevice.SwapBuffers(MainSwapchain);
+            GraphicsDevice.WaitForIdle();
+        }
 
         protected abstract void HandleWindowResize();
 

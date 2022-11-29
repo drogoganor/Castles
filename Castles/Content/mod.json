@@ -2,10 +2,23 @@
   "Name": "Castles",
   "TileSize": 24,
   "Campaigns": [],
-  "Fonts": {
-    "FontName": "ARIAL.TTF",
-    "FontSize": 26
-  },
+  "Fonts": [
+    {
+      "SizeEnum": "Small",
+      "FontName": "ARIAL.TTF",
+      "FontSize": 14
+    },
+    {
+      "SizeEnum": "Medium",
+      "FontName": "ARIAL.TTF",
+      "FontSize": 18
+    },
+    {
+      "SizeEnum": "Large",
+      "FontName": "ARIAL.TTF",
+      "FontSize": 26
+    }
+  ],
   "Textures": [
     {
       "ID": 1,
