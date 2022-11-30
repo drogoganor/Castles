@@ -18,10 +18,10 @@ namespace Castles.Data
         {
             PosX = pos.X;
             PosY = pos.Y;
-            ColorA = color.X;
-            ColorR = color.Y;
-            ColorG = color.Z;
-            ColorB = color.W;
+            ColorR = color.X;
+            ColorG = color.Y;
+            ColorB = color.Z;
+            ColorA = color.W;
         }
     }
 }

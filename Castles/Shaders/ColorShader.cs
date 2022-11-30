@@ -53,7 +53,7 @@ namespace Castles.Shaders
                     new ResourceLayoutElementDescription("WorldBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex)));
 
             Pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
-                BlendStateDescription.SingleOverrideBlend,
+                BlendStateDescription.SingleAlphaBlend,
                 DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerStateDescription.Default,
                 PrimitiveTopology.LineList,

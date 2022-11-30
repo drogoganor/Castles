@@ -47,6 +47,10 @@
     {
       "ID": 7,
       "Filename": "pavement1.png"
+    },
+    {
+      "ID": 8,
+      "Filename": "test.png"
     }
   ]
 }

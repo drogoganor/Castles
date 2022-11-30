@@ -12,14 +12,14 @@
         0,
         0
       ],
-      "Texture": 1
+      "Texture": 8
     },
     {
       "Position": [
-        1,
+        0,
         0
       ],
-      "Texture": 0
+      "Texture": 8
     }
   ]
 }

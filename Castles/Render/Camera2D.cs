@@ -16,7 +16,7 @@ namespace Castles.Render
         private Matrix4x4 projectionMatrix;
 
         private Vector3 position = new Vector3(0, 0, 0);
-        private Vector3 lookDirection = new Vector3(0, 0, -1f);
+        private Vector3 lookDirection = new Vector3(0, 0, 1f);
 
         private float yaw;
         private float pitch;
