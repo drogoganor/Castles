@@ -34,7 +34,7 @@ namespace Castles.Render
 
             var sizeX = 12;
             var sizeY = 12;
-            var gridColor = new Vector4(1f, 0, 1f, 1f);
+            var gridColor = new Vector4(0f, 1f, 0f, 0f);
 
             for (var x = 0; x <= sizeX; x++)
             {
@@ -94,6 +94,7 @@ namespace Castles.Render
             cl.SetPipeline(colorShader.Pipeline);
             cl.SetVertexBuffer(0, vertexBuffer);
             cl.SetGraphicsResourceSet(0, colorShader.ProjectionViewSet);
+            cl.SetGraphicsResourceSet(1, colorShader.WorldTextureSet);
             cl.Draw((uint)vertices.Length);
 
             cl.End();

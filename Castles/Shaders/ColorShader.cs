@@ -15,6 +15,7 @@ namespace Castles.Shaders
         public CommandList CommandList { get; private set; }
         public Pipeline Pipeline { get; private set; }
         public ResourceSet ProjectionViewSet { get; private set; }
+        public ResourceSet WorldTextureSet { get; private set; }
 
         public ColorShader(IApplicationWindow window,
             GameResourcesProvider gameResourcesProvider) : base(window)
@@ -64,6 +65,10 @@ namespace Castles.Shaders
                 projViewLayout,
                 ProjectionBuffer,
                 ViewBuffer));
+
+            WorldTextureSet = factory.CreateResourceSet(new ResourceSetDescription(
+                worldTextureLayout,
+                WorldBuffer));
 
             CommandList = factory.CreateCommandList();
         }
