@@ -85,7 +85,13 @@ namespace Castles
                 .AsSelf()
                 .AsImplementedInterfaces()
                 .SingleInstance();
-            
+
+            builder
+                .RegisterType<DebugGrid>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
             builder
                 .RegisterType<Scene>()
                 .AsSelf()
