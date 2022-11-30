@@ -29,11 +29,14 @@ This project's aim is to create a complete game, however simple, with the follow
 	* Midi music
 * Lighting system (shaders)
 * Inventory display (but not management)
+* i18n
 
 I decided to start this project after a previous attempt at a 3D game engine became too ambitious, and the code quality was not up to par. It didn't employ IoC or DI and wasn't structured in a robust way employing SOLID principles strongly enough.
 
 Task List
 * [x] Setup game creation using DI and IoC
 * [ ] Editor New Map UI
+* [ ] Editor new map state
+* [ ] Editor grid
 * [ ] Editor UI
-* [ ] i18n
+* [ ] Editor list of tiles
