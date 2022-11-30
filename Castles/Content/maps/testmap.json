@@ -10,16 +10,16 @@
     {
       "Position": [
         0,
-        0
+        2
       ],
-      "Texture": 8
+      "Texture": 4
     },
     {
       "Position": [
-        0,
-        0
+        1,
+        1
       ],
-      "Texture": 8
+      "Texture": 3
     }
   ]
 }

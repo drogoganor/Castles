@@ -49,21 +49,23 @@ namespace Castles.Render
 
             cl.Begin();
 
-            var projection = Matrix4x4.CreateOrthographic(
+            var projection = Matrix4x4.CreateOrthographicOffCenter(
+                0,
                 Window.Width,
                 Window.Height,
+                0,
                 1f,
-                1000f);
+                100f);
 
             cl.UpdateBuffer(textureShader.ProjectionBuffer, 0, projection);
 
-            var direction = new Vector3(0, 0, 1f);
+            var direction = new Vector3(0, 0, -1f);
 
             var view = Matrix4x4.CreateLookAt(camera.Position, camera.Position + direction, Vector3.UnitY);
 
             cl.UpdateBuffer(textureShader.ViewBuffer, 0, view);
 
-            cl.UpdateBuffer(textureShader.WorldBuffer, 0, Matrix4x4.Identity);
+            cl.UpdateBuffer(textureShader.WorldBuffer, 0, Matrix4x4.CreateTranslation(new Vector3(0, 0, -2)));
 
             cl.SetFramebuffer(MainSwapchain.Framebuffer);
             cl.ClearDepthStencil(1f);

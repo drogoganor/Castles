@@ -73,12 +73,6 @@ namespace Castles.Render
 
             cl.Begin();
 
-            //var projection = Matrix4x4.CreateOrthographic(
-            //    Window.Width,
-            //    Window.Height,
-            //    0.5f,
-            //    1000f);
-
             var projection = Matrix4x4.CreateOrthographicOffCenter(
                 0,
                 Window.Width,

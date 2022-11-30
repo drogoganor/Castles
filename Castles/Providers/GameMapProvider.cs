@@ -35,12 +35,12 @@ namespace Castles.Providers
                     new VertexPositionTexture2D[]
                     {
                         // Back
-                        new VertexPositionTexture2D(scaledPosition + new Vector2(tileSize, tileSize), new Vector3(0, 0, block.Texture)),
-                        new VertexPositionTexture2D(scaledPosition + new Vector2(0, tileSize), new Vector3(1, 0, block.Texture)),
-                        new VertexPositionTexture2D(scaledPosition + new Vector2(0, 0), new Vector3(1, 1, block.Texture)),
-                        new VertexPositionTexture2D(scaledPosition + new Vector2(tileSize, tileSize), new Vector3(0, 0, block.Texture)),
-                        new VertexPositionTexture2D(scaledPosition + new Vector2(0, 0), new Vector3(1, 1, block.Texture)),
-                        new VertexPositionTexture2D(scaledPosition + new Vector2(tileSize, 0), new Vector3(0, 1, block.Texture)),
+                        new VertexPositionTexture2D(scaledPosition + new Vector2(tileSize, tileSize), new Vector3(1, 1, block.Texture)),
+                        new VertexPositionTexture2D(scaledPosition + new Vector2(0, tileSize), new Vector3(0, 1, block.Texture)),
+                        new VertexPositionTexture2D(scaledPosition + new Vector2(0, 0), new Vector3(0, 0, block.Texture)),
+                        new VertexPositionTexture2D(scaledPosition + new Vector2(tileSize, tileSize), new Vector3(1, 1, block.Texture)),
+                        new VertexPositionTexture2D(scaledPosition + new Vector2(0, 0), new Vector3(0, 0, block.Texture)),
+                        new VertexPositionTexture2D(scaledPosition + new Vector2(tileSize, 0), new Vector3(1, 0, block.Texture)),
                     }
                 );
             }
