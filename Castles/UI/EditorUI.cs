@@ -14,25 +14,30 @@ namespace Castles.UI
         public event Action OnExit;
 
         private readonly Scene scene;
+        private readonly DebugGrid debugGrid;
 
         public EditorUI(
             ModManifestProvider modManifestProvider,
             IApplicationWindow window,
-            Scene scene) : base(modManifestProvider, window)
+            Scene scene,
+            DebugGrid debugGrid) : base(modManifestProvider, window)
         {
             this.scene = scene;
+            this.debugGrid = debugGrid;
         }
 
         public override void Show()
         {
             base.Show();
             scene.Show();
+            debugGrid.Show();
         }
 
         public override void Hide()
         {
             base.Hide();
             scene.Hide();
+            debugGrid.Hide();
         }
 
         private void HandleExit()

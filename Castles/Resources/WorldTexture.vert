@@ -16,8 +16,8 @@ layout(set = 1, binding = 0) uniform WorldBuffer
 };
 
 layout(location = 0) in vec2 Position;
-layout(location = 1) in vec4 Color;
-layout(location = 0) out vec4 fsin_Color;
+layout(location = 1) in vec3 TexCoords;
+layout(location = 0) out vec3 fsin_texCoords;
 
 void main()
 {
@@ -25,5 +25,5 @@ void main()
     vec4 viewPosition = View * worldPosition;
     vec4 clipPosition = Projection * viewPosition;
     gl_Position = clipPosition;
-    fsin_Color = Color;
+    fsin_texCoords = TexCoords;
 }
