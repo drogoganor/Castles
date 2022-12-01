@@ -18,7 +18,7 @@ namespace Castles.SampleBase
 
         public event Action<float> Rendering;
         public event Action PostRender;
-        public event Action<GraphicsDevice, ResourceFactory, Swapchain> GraphicsDeviceCreated;
+        //public event Action<GraphicsDevice, ResourceFactory, Swapchain> GraphicsDeviceCreated;
         public event Action GraphicsDeviceDestroyed;
         public event Action Resized;
         public event Action<KeyEvent> KeyPressed;
@@ -45,9 +45,9 @@ namespace Castles.SampleBase
 
         public void Run()
         {
-            factory = new DisposeCollectorResourceFactory(graphicsDevice.ResourceFactory);
+            //factory = new DisposeCollectorResourceFactory(graphicsDevice.ResourceFactory);
 
-            GraphicsDeviceCreated?.Invoke(graphicsDevice, factory, graphicsDevice.MainSwapchain);
+            //GraphicsDeviceCreated?.Invoke(graphicsDevice, factory, graphicsDevice.MainSwapchain);
 
             var sw = Stopwatch.StartNew();
             var previousElapsed = sw.Elapsed.TotalSeconds;

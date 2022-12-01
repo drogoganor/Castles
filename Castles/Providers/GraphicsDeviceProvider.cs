@@ -1,13 +1,16 @@
 ﻿using Veldrid;
 using Veldrid.StartupUtilities;
+using Veldrid.Utilities;
 
 namespace Castles.Providers
 {
     public class GraphicsDeviceProvider
     {
         private readonly GraphicsDevice graphicsDevice;
+        private readonly DisposeCollectorResourceFactory resourceFactory;
 
         public GraphicsDevice GraphicsDevice => graphicsDevice;
+        public ResourceFactory ResourceFactory => resourceFactory;
 
         public GraphicsDeviceProvider(Sdl2WindowProvider sdl2WindowProvider)
         {
@@ -22,6 +25,7 @@ namespace Castles.Providers
             options.Debug = true;
 #endif
             graphicsDevice = VeldridStartup.CreateGraphicsDevice(sdl2WindowProvider.Window, options, GraphicsBackend.Direct3D11);
+            resourceFactory = new DisposeCollectorResourceFactory(graphicsDevice.ResourceFactory);
         }
     }
 }

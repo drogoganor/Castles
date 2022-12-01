@@ -9,6 +9,7 @@ namespace Castles.Shaders
 {
     public class ColorShader : Shader
     {
+        private GraphicsDeviceProvider graphicsDeviceProvider;
         public DeviceBuffer ProjectionBuffer { get; private set; }
         public DeviceBuffer ViewBuffer { get; private set; }
         public DeviceBuffer WorldBuffer { get; private set; }
@@ -18,7 +19,8 @@ namespace Castles.Shaders
         public ResourceSet WorldTextureSet { get; private set; }
 
         public ColorShader(IApplicationWindow window,
-            GameResourcesProvider gameResourcesProvider) : base(window)
+            GraphicsDeviceProvider graphicsDeviceProvider,
+            GameResourcesProvider gameResourcesProvider) : base(window, graphicsDeviceProvider)
         {
         }
 

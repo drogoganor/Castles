@@ -10,6 +10,7 @@ namespace Castles.Shaders
     public class TextureShader : Shader
     {
         private GameResourcesProvider gameResourcesProvider;
+        private GraphicsDeviceProvider graphicsDeviceProvider;
         public DeviceBuffer ProjectionBuffer { get; private set; }
         public DeviceBuffer ViewBuffer { get; private set; }
         public DeviceBuffer WorldBuffer { get; private set; }
@@ -20,13 +21,14 @@ namespace Castles.Shaders
         public TextureView SurfaceTextureView { get; private set; }
 
         public TextureShader(IApplicationWindow window,
-            GameResourcesProvider gameResourcesProvider) : base(window)
+            GraphicsDeviceProvider graphicsDeviceProvider,
+            GameResourcesProvider gameResourcesProvider) : base(window, graphicsDeviceProvider)
         {
+            this.graphicsDeviceProvider = graphicsDeviceProvider;
             this.gameResourcesProvider = gameResourcesProvider;
-        }
 
-        protected override void CreateResources(ResourceFactory factory)
-        {
+            var factory = graphicsDeviceProvider.ResourceFactory;
+
             ProjectionBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
             ViewBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
             WorldBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));

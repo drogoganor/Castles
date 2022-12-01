@@ -34,6 +34,8 @@ This project's aim is to create a complete game, however simple, with the follow
 I decided to start this project after a previous attempt at a 3D game engine became too ambitious, and the code quality was not up to par. It didn't employ IoC or DI and wasn't structured in a robust way employing SOLID principles strongly enough.
 
 Task List
+* [ ] Refactor VeldridStartupWindow.Run() to use DI/IoC to create the resource factory
+
 * [x] Setup game creation using DI and IoC
 * [ ] Editor New Map UI
 * [ ] Editor new map state

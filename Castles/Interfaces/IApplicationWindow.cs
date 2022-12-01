@@ -10,7 +10,7 @@ namespace Castles.Interfaces
 
         event Action<float> Rendering;
         event Action PostRender;
-        event Action<GraphicsDevice, ResourceFactory, Swapchain> GraphicsDeviceCreated;
+        //event Action<GraphicsDevice, ResourceFactory, Swapchain> GraphicsDeviceCreated;
         event Action GraphicsDeviceDestroyed;
         event Action Resized;
         event Action<KeyEvent> KeyPressed;

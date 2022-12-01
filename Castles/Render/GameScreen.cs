@@ -14,7 +14,7 @@ namespace Castles.Render
         {
             Window = window;
             Window.Resized += HandleWindowResize;
-            Window.GraphicsDeviceCreated += OnGraphicsDeviceCreated;
+            //Window.GraphicsDeviceCreated += OnGraphicsDeviceCreated;
             Window.GraphicsDeviceDestroyed += OnDeviceDestroyed;
         }
 
@@ -44,7 +44,7 @@ namespace Castles.Render
         {
             Hide();
             Window.Resized -= HandleWindowResize;
-            Window.GraphicsDeviceCreated -= OnGraphicsDeviceCreated;
+            //Window.GraphicsDeviceCreated -= OnGraphicsDeviceCreated;
             Window.GraphicsDeviceDestroyed -= OnDeviceDestroyed;
             GraphicsDevice = null;
             ResourceFactory = null;
