@@ -9,7 +9,7 @@ namespace Castles.Interfaces
         PlatformType PlatformType { get; }
 
         event Action<float> Rendering;
-        event Action PostRender;
+        //event Action PostRender;
         //event Action<GraphicsDevice, ResourceFactory, Swapchain> GraphicsDeviceCreated;
         event Action GraphicsDeviceDestroyed;
         event Action Resized;

@@ -4,36 +4,47 @@ using System;
 using Castles.Interfaces;
 using Castles.Providers;
 using Castles.Enums;
+using Veldrid;
 
 namespace Castles.UI
 {
+    /// <summary>
+    /// TODO: Create separate "MainMenuScreen" to handle Show/Hide functions, incorporating MainMenu.
+    /// MainMenuScreen should also call GraphicsDevice.SwapBuffers(MainSwapchain); GraphicsDevice.WaitForIdle();
+    /// </summary>
     public class MainMenu : Menu
     {
+        private readonly IApplicationWindow window;
+        private readonly ImGuiProvider imGuiProvider;
+
         public event Action OnNewGame;
+        public event Action OnExitGame;
 
         public MainMenu(
-            ModManifestProvider modManifestProvider,
-            IApplicationWindow window) : base(modManifestProvider, window)
+            IApplicationWindow window,
+            ImGuiProvider imGuiProvider,
+            GraphicsDeviceProvider graphicsDeviceProvider)
+            : base(window, imGuiProvider, graphicsDeviceProvider)
         {
+            this.imGuiProvider = imGuiProvider;
+            this.window = window;
         }
 
-        private void NewGame()
+        private void HandleNewGame()
         {
-            Hide();
             OnNewGame?.Invoke();
         }
 
-        private void ExitGame()
+        private void HandleExitGame()
         {
-            Hide();
-            Window.Close();
+            OnExitGame?.Invoke();
         }
 
-        protected override void Draw(float deltaSeconds)
+        public override void Draw(float deltaSeconds)
         {
-            PreDraw(deltaSeconds);
+            UpdateInput(deltaSeconds);
 
-            var windowSize = new Vector2(Window.Width, Window.Height);
+            var windowSize = new Vector2(window.Width, window.Height);
             var menuSize = new Vector2(400, 600);
             var menuPadding = 40f;
             var buttonSize = new Vector2(menuSize.X - menuPadding, 32);
@@ -41,7 +52,7 @@ namespace Castles.UI
 
             var menuPos = (windowSize - menuSize) / 2;
             ImGui.SetNextWindowPos(menuPos);
-            ImGui.PushFont(Fonts[FontSize.Large].Value);
+            ImGui.PushFont(imGuiProvider.Fonts[FontSize.Large].Value);
 
             if (ImGui.Begin("Main Menu",
                 ImGuiWindowFlags.NoTitleBar |
@@ -56,13 +67,13 @@ namespace Castles.UI
                 ImGui.SetCursorPosX(menuPadding / 2f);
                 if (ImGui.Button("New Game", buttonSize))
                 {
-                    NewGame();
+                    HandleNewGame();
                 }
 
                 ImGui.SetCursorPosX(menuPadding / 2f);
                 if (ImGui.Button("Quit", buttonSize))
                 {
-                    ExitGame();
+                    HandleExitGame();
                 }
             }
 

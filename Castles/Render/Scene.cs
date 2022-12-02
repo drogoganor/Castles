@@ -7,37 +7,41 @@ using Veldrid;
 
 namespace Castles.Render
 {
-    public class Scene : GameScreen
+    public class Scene : IRenderable
     {
-        private TextureShader textureShader;
-        private GameMapProvider gameMapProvider;
-        private Camera2D camera;
+        private readonly IApplicationWindow window;
+        private readonly GraphicsDeviceProvider graphicsDeviceProvider;
+        private readonly TextureShader textureShader;
+        private readonly GameMapProvider gameMapProvider;
+        private readonly Camera2D camera;
         private readonly VertexPositionTexture2D[] vertices;
-        private DeviceBuffer vertexBuffer;
+        private readonly DeviceBuffer vertexBuffer;
 
         public Scene(
             IApplicationWindow window,
+            GraphicsDeviceProvider graphicsDeviceProvider,
             Camera2D camera,
             TextureShader textureShader,
-            GameMapProvider gameMapProvider) : base(window)
+            GameMapProvider gameMapProvider)
         {
+            this.window = window;
+            this.graphicsDeviceProvider = graphicsDeviceProvider;
             this.textureShader = textureShader;
             this.camera = camera;
             this.gameMapProvider = gameMapProvider;
 
             vertices = gameMapProvider.GetVertexArray();
-        }
 
-        protected override void CreateResources(ResourceFactory factory)
-        {
             if (vertices != null)
             {
-                vertexBuffer = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture2D.SizeInBytes * vertices.Length), BufferUsage.VertexBuffer));
-                GraphicsDevice.UpdateBuffer(vertexBuffer, 0, vertices);
+                vertexBuffer = graphicsDeviceProvider.ResourceFactory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture2D.SizeInBytes * vertices.Length), BufferUsage.VertexBuffer));
+                graphicsDeviceProvider.GraphicsDevice.UpdateBuffer(vertexBuffer, 0, vertices);
             }
+
+            window.Resized += HandleWindowResize;
         }
 
-        protected override void Draw(float deltaSeconds)
+        public void Draw(float deltaSeconds)
         {
             var cl = textureShader.CommandList;
             camera.Update(deltaSeconds);
@@ -51,8 +55,8 @@ namespace Castles.Render
 
             var projection = Matrix4x4.CreateOrthographicOffCenter(
                 0,
-                Window.Width,
-                Window.Height,
+                window.Width,
+                window.Height,
                 0,
                 1f,
                 100f);
@@ -67,7 +71,7 @@ namespace Castles.Render
 
             cl.UpdateBuffer(textureShader.WorldBuffer, 0, Matrix4x4.CreateTranslation(new Vector3(0, 0, -2)));
 
-            cl.SetFramebuffer(MainSwapchain.Framebuffer);
+            cl.SetFramebuffer(graphicsDeviceProvider.GraphicsDevice.MainSwapchain.Framebuffer);
             cl.ClearDepthStencil(1f);
             cl.SetPipeline(textureShader.Pipeline);
             cl.SetVertexBuffer(0, vertexBuffer);
@@ -76,12 +80,12 @@ namespace Castles.Render
             cl.Draw((uint)vertices.Length);
 
             cl.End();
-            GraphicsDevice.SubmitCommands(cl);
+            graphicsDeviceProvider.GraphicsDevice.SubmitCommands(cl);
         }
 
-        protected override void HandleWindowResize()
+        private void HandleWindowResize()
         {
-            camera.WindowResized(Window.Width, Window.Height);
+            camera.WindowResized(window.Width, window.Height);
         }
     }
 }

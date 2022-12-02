@@ -8,23 +8,35 @@ using Veldrid;
 
 namespace Castles.Render
 {
-    public class DebugGrid : GameScreen
+    public class DebugGrid : IRenderable
     {
+        private readonly IApplicationWindow window;
+        private readonly GraphicsDeviceProvider graphicsDeviceProvider;
         private readonly ModManifestProvider modManifestProvider;
         private readonly ColorShader colorShader;
         private readonly Camera2D camera;
         private readonly VertexPositionColor2D[] vertices;
-        private DeviceBuffer vertexBuffer;
+        private readonly DeviceBuffer vertexBuffer;
 
-        public DebugGrid(IApplicationWindow window,
+        public DebugGrid(
+            IApplicationWindow window,
+            GraphicsDeviceProvider graphicsDeviceProvider,
             ModManifestProvider modManifestProvider,
             ColorShader colorShader,
-            Camera2D camera) : base(window)
+            Camera2D camera)
         {
+            this.window = window;
+            this.graphicsDeviceProvider = graphicsDeviceProvider;
             this.modManifestProvider = modManifestProvider;
             this.colorShader = colorShader;
             this.camera = camera;
             vertices = GetVertexArray();
+
+            if (vertices != null)
+            {
+                vertexBuffer = graphicsDeviceProvider.ResourceFactory.CreateBuffer(new BufferDescription((uint)(VertexPositionColor2D.SizeInBytes * vertices.Length), BufferUsage.VertexBuffer));
+                graphicsDeviceProvider.GraphicsDevice.UpdateBuffer(vertexBuffer, 0, vertices);
+            }
         }
 
         public VertexPositionColor2D[] GetVertexArray()
@@ -51,16 +63,7 @@ namespace Castles.Render
             return vertexList.ToArray();
         }
 
-        protected override void CreateResources(ResourceFactory factory)
-        {
-            if (vertices != null)
-            {
-                vertexBuffer = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionColor2D.SizeInBytes * vertices.Length), BufferUsage.VertexBuffer));
-                GraphicsDevice.UpdateBuffer(vertexBuffer, 0, vertices);
-            }
-        }
-
-        protected override void Draw(float deltaSeconds)
+        public void Draw(float deltaSeconds)
         {
             var cl = colorShader.CommandList;
             
@@ -75,8 +78,8 @@ namespace Castles.Render
 
             var projection = Matrix4x4.CreateOrthographicOffCenter(
                 0,
-                Window.Width,
-                Window.Height,
+                window.Width,
+                window.Height,
                 0,
                 1f,
                 100f);
@@ -91,7 +94,7 @@ namespace Castles.Render
 
             cl.UpdateBuffer(colorShader.WorldBuffer, 0, Matrix4x4.CreateTranslation(new Vector3(1, 1, -2)));
 
-            cl.SetFramebuffer(MainSwapchain.Framebuffer);
+            cl.SetFramebuffer(graphicsDeviceProvider.GraphicsDevice.MainSwapchain.Framebuffer);
             cl.ClearDepthStencil(1f);
             cl.SetPipeline(colorShader.Pipeline);
             cl.SetVertexBuffer(0, vertexBuffer);
@@ -100,11 +103,7 @@ namespace Castles.Render
             cl.Draw((uint)vertices.Length);
 
             cl.End();
-            GraphicsDevice.SubmitCommands(cl);
-        }
-
-        protected override void HandleWindowResize()
-        {
+            graphicsDeviceProvider.GraphicsDevice.SubmitCommands(cl);
         }
     }
 }

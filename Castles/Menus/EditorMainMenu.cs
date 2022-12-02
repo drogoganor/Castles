@@ -7,32 +7,38 @@ using Castles.Enums;
 
 namespace Castles.UI
 {
-    public class InGameMenu : Menu
+    public class EditorMainMenu : Menu
     {
-        public event Action OnEndGame;
-        public event Action OnReturnToGame;
+        public event Action OnNewMap;
+        public event Action OnEditMap;
 
-        public InGameMenu(
+        public EditorMainMenu(
             ModManifestProvider modManifestProvider,
             IApplicationWindow window) : base(modManifestProvider, window)
         {
         }
 
-        private void EndGame()
+        private void HandleNewMap()
         {
             Hide();
-            OnEndGame?.Invoke();
+            OnNewMap?.Invoke();
         }
 
-        private void ReturnToGame()
+        private void HandleEditMap()
         {
             Hide();
-            OnReturnToGame?.Invoke();
+            OnEditMap?.Invoke();
+        }
+
+        private void ExitEditor()
+        {
+            Hide();
+            Window.Close();
         }
 
         protected override void Draw(float deltaSeconds)
         {
-            PreDraw(deltaSeconds);
+            UpdateInput(deltaSeconds);
 
             var windowSize = new Vector2(Window.Width, Window.Height);
             var menuSize = new Vector2(400, 600);
@@ -52,24 +58,24 @@ namespace Castles.UI
                 ImGuiWindowFlags.NoMove |
                 ImGuiWindowFlags.NoResize))
             {
-                HorizontallyCenteredText("Castles - Ingame Menu", menuSize.X);
+                HorizontallyCenteredText("Castles - Map Editor", menuSize.X);
 
                 ImGui.SetCursorPosX(menuPadding / 2f);
-                if (ImGui.Button("Return to Game", buttonSize))
+                if (ImGui.Button("New Map", buttonSize))
                 {
-                    ReturnToGame();
+                    HandleNewMap();
                 }
 
                 ImGui.SetCursorPosX(menuPadding / 2f);
-                if (ImGui.Button("End Game", buttonSize))
+                if (ImGui.Button("Edit Map", buttonSize))
                 {
-                    EndGame();
+                    HandleEditMap();
                 }
 
                 ImGui.SetCursorPosX(menuPadding / 2f);
                 if (ImGui.Button("Quit", buttonSize))
                 {
-                    //ExitGame();
+                    ExitEditor();
                 }
             }
 

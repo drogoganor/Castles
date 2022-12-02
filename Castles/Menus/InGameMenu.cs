@@ -7,40 +7,38 @@ using Castles.Enums;
 
 namespace Castles.UI
 {
-    public class EditorMainMenu : Menu
+    public class InGameMenu : Menu
     {
-        public event Action OnNewMap;
-        public event Action OnEditMap;
+        private readonly IApplicationWindow window;
+        private readonly ImGuiProvider imGuiProvider;
 
-        public EditorMainMenu(
-            ModManifestProvider modManifestProvider,
-            IApplicationWindow window) : base(modManifestProvider, window)
+        public event Action OnEndGame;
+        public event Action OnReturnToGame;
+
+        public InGameMenu(
+            IApplicationWindow window,
+            ImGuiProvider imGuiProvider,
+            GraphicsDeviceProvider graphicsDeviceProvider) : base(window, imGuiProvider, graphicsDeviceProvider)
         {
+            this.imGuiProvider = imGuiProvider;
+            this.window = window;
         }
 
-        private void HandleNewMap()
+        private void HandleEndGame()
         {
-            Hide();
-            OnNewMap?.Invoke();
+            OnEndGame?.Invoke();
         }
 
-        private void HandleEditMap()
+        private void HandleReturnToGame()
         {
-            Hide();
-            OnEditMap?.Invoke();
+            OnReturnToGame?.Invoke();
         }
 
-        private void ExitEditor()
+        public override void Draw(float deltaSeconds)
         {
-            Hide();
-            Window.Close();
-        }
+            UpdateInput(deltaSeconds);
 
-        protected override void Draw(float deltaSeconds)
-        {
-            PreDraw(deltaSeconds);
-
-            var windowSize = new Vector2(Window.Width, Window.Height);
+            var windowSize = new Vector2(window.Width, window.Height);
             var menuSize = new Vector2(400, 600);
             var menuPadding = 40f;
             var buttonSize = new Vector2(menuSize.X - menuPadding, 32);
@@ -48,7 +46,7 @@ namespace Castles.UI
 
             var menuPos = (windowSize - menuSize) / 2;
             ImGui.SetNextWindowPos(menuPos);
-            ImGui.PushFont(Fonts[FontSize.Large].Value);
+            ImGui.PushFont(imGuiProvider.Fonts[FontSize.Large].Value);
 
             if (ImGui.Begin("Main Menu",
                 ImGuiWindowFlags.NoTitleBar |
@@ -58,24 +56,24 @@ namespace Castles.UI
                 ImGuiWindowFlags.NoMove |
                 ImGuiWindowFlags.NoResize))
             {
-                HorizontallyCenteredText("Castles - Map Editor", menuSize.X);
+                HorizontallyCenteredText("Castles - Ingame Menu", menuSize.X);
 
                 ImGui.SetCursorPosX(menuPadding / 2f);
-                if (ImGui.Button("New Map", buttonSize))
+                if (ImGui.Button("Return to Game", buttonSize))
                 {
-                    HandleNewMap();
+                    HandleReturnToGame();
                 }
 
                 ImGui.SetCursorPosX(menuPadding / 2f);
-                if (ImGui.Button("Edit Map", buttonSize))
+                if (ImGui.Button("End Game", buttonSize))
                 {
-                    HandleEditMap();
+                    HandleEndGame();
                 }
 
                 ImGui.SetCursorPosX(menuPadding / 2f);
                 if (ImGui.Button("Quit", buttonSize))
                 {
-                    ExitEditor();
+                    //ExitGame();
                 }
             }
 
