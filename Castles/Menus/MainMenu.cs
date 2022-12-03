@@ -14,9 +14,6 @@ namespace Castles.UI
     /// </summary>
     public class MainMenu : Menu
     {
-        private readonly IApplicationWindow window;
-        private readonly ImGuiProvider imGuiProvider;
-
         public event Action OnNewGame;
         public event Action OnExitGame;
 
@@ -26,8 +23,6 @@ namespace Castles.UI
             GraphicsDeviceProvider graphicsDeviceProvider)
             : base(window, imGuiProvider, graphicsDeviceProvider)
         {
-            this.imGuiProvider = imGuiProvider;
-            this.window = window;
         }
 
         private void HandleNewGame()

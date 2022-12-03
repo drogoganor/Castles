@@ -4,6 +4,7 @@ using Castles.Interfaces;
 using Castles.Providers;
 using Castles.Render;
 using Castles.SampleBase;
+using Castles.Screens;
 using Castles.Shaders;
 using Castles.UI;
 
@@ -69,12 +70,6 @@ namespace Castles
                 .SingleInstance();
 
             builder
-                .RegisterType<MainMenu>()
-                .AsSelf()
-                .AsImplementedInterfaces()
-                .SingleInstance();
-
-            builder
                 .RegisterType<TextureShader>()
                 .AsSelf()
                 .AsImplementedInterfaces()
@@ -94,6 +89,12 @@ namespace Castles
 
             builder
                 .RegisterType<Scene>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<ImGuiProvider>()
                 .AsSelf()
                 .AsImplementedInterfaces()
                 .SingleInstance();

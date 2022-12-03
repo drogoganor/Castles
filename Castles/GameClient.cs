@@ -3,6 +3,7 @@ using Castles.Interfaces;
 using Castles.Providers;
 using Castles.Render;
 using Castles.SampleBase;
+using Castles.Screens;
 using Castles.UI;
 using System;
 using Veldrid;
@@ -19,32 +20,32 @@ namespace Castles
         private readonly ModManifestProvider modManifestProvider;
         private readonly GameResourcesProvider gameResourcesProvider;
 
-        private readonly Scene scene;
-
-        private readonly MainMenu mainMenu;
-        private readonly InGameMenu inGameMenu;
+        private readonly InGameScreen inGameScreen;
+        private readonly MainMenuScreen mainMenuScreen;
+        private readonly InGameMenuScreen inGameMenuScreen;
         private readonly IApplicationWindow window;
 
         public GameClient(
             IApplicationWindow window,
             ModManifestProvider modManifestProvider,
             GameResourcesProvider gameResourcesProvider,
-            MainMenu mainMenu,
-            Scene scene)
+            MainMenuScreen mainMenuScreen,
+            InGameMenuScreen inGameMenuScreen,
+            InGameScreen inGameScreen)
         {
             this.gameResourcesProvider = gameResourcesProvider;
             this.modManifestProvider = modManifestProvider;
             this.window = window;
-            this.scene = scene;
+            this.inGameScreen = inGameScreen;
+            this.mainMenuScreen = mainMenuScreen;
+            this.inGameMenuScreen = inGameMenuScreen;
 
-            this.mainMenu = mainMenu;
-
-            mainMenu.OnNewGame += HandleNewGame;
+            mainMenuScreen.OnNewGame += HandleNewGame;
             OnEndGame += HandleEndGame;
 
-            inGameMenu = new InGameMenu(modManifestProvider, window);
-            inGameMenu.OnReturnToGame += InGameMenu_OnReturnToGame;
-            inGameMenu.OnEndGame += InGameMenu_OnEndGame;
+            // inGameMenuScreen = new InGameMenuScreen(modManifestProvider, window);
+            inGameMenuScreen.OnReturnToGame += InGameMenu_OnReturnToGame;
+            inGameMenuScreen.OnEndGame += InGameMenu_OnEndGame;
 
             window.KeyPressed += Window_KeyPressed;
         }
@@ -61,40 +62,40 @@ namespace Castles
 
         public void Run()
         {
-            mainMenu.Show();
+            mainMenuScreen.Show();
             window.Run();
 
-            inGameMenu.OnReturnToGame -= InGameMenu_OnReturnToGame;
-            inGameMenu.OnEndGame -= InGameMenu_OnEndGame;
+            inGameMenuScreen.OnReturnToGame -= InGameMenu_OnReturnToGame;
+            inGameMenuScreen.OnEndGame -= InGameMenu_OnEndGame;
         }
 
         private void HandleEndGame()
         {
-            scene.Hide();
-            mainMenu.Show();
+            inGameScreen.Hide();
+            mainMenuScreen.Show();
         }
 
         private void HandleNewGame()
         {
-            mainMenu.Hide();
-            scene.Show();
+            mainMenuScreen.Hide();
+            inGameScreen.Show();
         }
 
         private void InGameMenu_OnEndGame()
         {
-            scene.Hide();
+            inGameScreen.Hide();
             OnEndGame?.Invoke();
         }
 
         private void ShowInGameMenu()
         {
-            scene.Hide();
-            inGameMenu.Show();
+            inGameScreen.Hide();
+            inGameMenuScreen.Show();
         }
 
         private void InGameMenu_OnReturnToGame()
         {
-            scene.Show();
+            inGameScreen.Show();
         }
     }
 }

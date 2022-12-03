@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Castles.Screens;
 using Castles.UI;
 
 namespace Castles.Editor
@@ -21,6 +22,24 @@ namespace Castles.Editor
 
             builder
                 .RegisterType<EditorUI>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<EditorMainMenuScreen>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<EditorNewMapMenuScreen>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<EditorScreen>()
                 .AsSelf()
                 .AsImplementedInterfaces()
                 .SingleInstance();

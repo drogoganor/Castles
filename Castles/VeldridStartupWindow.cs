@@ -76,7 +76,7 @@ namespace Castles.SampleBase
             }
 
             graphicsDevice.WaitForIdle();
-            factory.DisposeCollector.DisposeAll();
+            //factory.DisposeCollector.DisposeAll();
             graphicsDevice.Dispose();
             GraphicsDeviceDestroyed?.Invoke();
         }

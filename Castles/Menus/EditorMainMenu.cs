@@ -11,36 +11,36 @@ namespace Castles.UI
     {
         public event Action OnNewMap;
         public event Action OnEditMap;
+        public event Action OnExitEditor;
 
         public EditorMainMenu(
-            ModManifestProvider modManifestProvider,
-            IApplicationWindow window) : base(modManifestProvider, window)
+            IApplicationWindow window,
+            ImGuiProvider imGuiProvider,
+            GraphicsDeviceProvider graphicsDeviceProvider)
+            : base(window, imGuiProvider, graphicsDeviceProvider)
         {
         }
 
         private void HandleNewMap()
         {
-            Hide();
             OnNewMap?.Invoke();
         }
 
         private void HandleEditMap()
         {
-            Hide();
             OnEditMap?.Invoke();
         }
 
-        private void ExitEditor()
+        private void HandleExitEditor()
         {
-            Hide();
-            Window.Close();
+            OnExitEditor?.Invoke();
         }
 
-        protected override void Draw(float deltaSeconds)
+        public override void Draw(float deltaSeconds)
         {
             UpdateInput(deltaSeconds);
 
-            var windowSize = new Vector2(Window.Width, Window.Height);
+            var windowSize = new Vector2(window.Width, window.Height);
             var menuSize = new Vector2(400, 600);
             var menuPadding = 40f;
             var buttonSize = new Vector2(menuSize.X - menuPadding, 32);
@@ -48,7 +48,7 @@ namespace Castles.UI
 
             var menuPos = (windowSize - menuSize) / 2;
             ImGui.SetNextWindowPos(menuPos);
-            ImGui.PushFont(Fonts[FontSize.Large].Value);
+            ImGui.PushFont(imGuiProvider.Fonts[FontSize.Large].Value);
 
             if (ImGui.Begin("Main Menu",
                 ImGuiWindowFlags.NoTitleBar |
@@ -75,7 +75,7 @@ namespace Castles.UI
                 ImGui.SetCursorPosX(menuPadding / 2f);
                 if (ImGui.Button("Quit", buttonSize))
                 {
-                    ExitEditor();
+                    HandleExitEditor();
                 }
             }
 

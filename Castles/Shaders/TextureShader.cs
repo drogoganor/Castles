@@ -9,8 +9,6 @@ namespace Castles.Shaders
 {
     public class TextureShader : Shader
     {
-        private GameResourcesProvider gameResourcesProvider;
-        private GraphicsDeviceProvider graphicsDeviceProvider;
         public DeviceBuffer ProjectionBuffer { get; private set; }
         public DeviceBuffer ViewBuffer { get; private set; }
         public DeviceBuffer WorldBuffer { get; private set; }
@@ -22,11 +20,9 @@ namespace Castles.Shaders
 
         public TextureShader(IApplicationWindow window,
             GraphicsDeviceProvider graphicsDeviceProvider,
-            GameResourcesProvider gameResourcesProvider) : base(window, graphicsDeviceProvider)
+            GameResourcesProvider gameResourcesProvider)
+            : base(window, graphicsDeviceProvider)
         {
-            this.graphicsDeviceProvider = graphicsDeviceProvider;
-            this.gameResourcesProvider = gameResourcesProvider;
-
             var factory = graphicsDeviceProvider.ResourceFactory;
 
             ProjectionBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));

@@ -2,6 +2,7 @@
 using Castles.Interfaces;
 using Castles.Providers;
 using Castles.Render;
+using Castles.Screens;
 using Castles.UI;
 using System;
 
@@ -14,59 +15,59 @@ namespace Castles
         private readonly ModManifestProvider modManifestProvider;
         private readonly GameResourcesProvider gameResourcesProvider;
 
-        private readonly EditorMainMenu mainMenu;
-        private readonly EditorNewMapMenu newMapMenu;
-        private readonly EditorUI editorUI;
+        private readonly EditorMainMenuScreen editorMainMenuScreen;
+        private readonly EditorNewMapMenuScreen newMapMenuScreen;
+        private readonly EditorScreen editorScreen;
         private readonly IApplicationWindow window;
 
         public EditorClient(
             IApplicationWindow window,
             ModManifestProvider modManifestProvider,
             GameResourcesProvider gameResourcesProvider,
-            EditorMainMenu mainMenu,
-            EditorNewMapMenu newMapMenu,
-            EditorUI editorUI)
+            EditorMainMenuScreen editorMainMenuScreen,
+            EditorNewMapMenuScreen newMapMenuScreen,
+            EditorScreen editorScreen)
         {
             this.gameResourcesProvider = gameResourcesProvider;
             this.modManifestProvider = modManifestProvider;
             this.window = window;
 
-            this.mainMenu = mainMenu;
-            this.newMapMenu = newMapMenu;
-            this.editorUI = editorUI;
+            this.editorMainMenuScreen = editorMainMenuScreen;
+            this.newMapMenuScreen = newMapMenuScreen;
+            this.editorScreen = editorScreen;
 
-            mainMenu.OnNewMap += HandleNewMap;
+            editorMainMenuScreen.OnNewMap += HandleNewMap;
             OnEndGame += HandleEndGame;
-            newMapMenu.OnCancelNewMap += NewMapMenu_OnCancelNewMap;
-            newMapMenu.OnCreateNewMap += NewMapMenu_OnCreateNewMap;
+            newMapMenuScreen.OnCancelNewMap += NewMapMenu_OnCancelNewMap;
+            newMapMenuScreen.OnCreateNewMap += NewMapMenu_OnCreateNewMap;
         }
 
         private void NewMapMenu_OnCreateNewMap(GameMapFileHeader mapHeader)
         {
             // TODO: Create new map file and save
             // Then create new editor gamestate
-            editorUI.Show();
+            editorScreen.Show();
         }
 
         private void NewMapMenu_OnCancelNewMap()
         {
-            mainMenu.Show();
+            editorMainMenuScreen.Show();
         }
 
         public void Run()
         {
-            mainMenu.Show();
+            editorMainMenuScreen.Show();
             window.Run();
         }
 
         private void HandleEndGame()
         {
-            mainMenu.Show();
+            editorMainMenuScreen.Show();
         }
 
         private void HandleNewMap()
         {
-            newMapMenu.Show();
+            newMapMenuScreen.Show();
         }
     }
 }

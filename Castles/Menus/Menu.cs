@@ -11,7 +11,8 @@ namespace Castles.UI
     /// </summary>
     public abstract class Menu : IRenderable
     {
-        private readonly IApplicationWindow window;
+        protected readonly IApplicationWindow window;
+        protected readonly ImGuiProvider imGuiProvider;
         private readonly ImGuiRenderer imGuiRenderer;
         private readonly CommandList commandList;
         private readonly GraphicsDevice graphicsDevice;
@@ -24,6 +25,7 @@ namespace Castles.UI
             GraphicsDeviceProvider graphicsDeviceProvider)
         {
             this.window = window;
+            this.imGuiProvider = imGuiProvider;
             imGuiRenderer = imGuiProvider.ImGuiRenderer;
             commandList = imGuiProvider.CommandList;
             graphicsDevice = graphicsDeviceProvider.GraphicsDevice;

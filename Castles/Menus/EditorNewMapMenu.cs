@@ -19,14 +19,15 @@ namespace Castles.UI
         public event Action OnCancelNewMap;
 
         public EditorNewMapMenu(
-            ModManifestProvider modManifestProvider,
-            IApplicationWindow window) : base(modManifestProvider, window)
+            IApplicationWindow window,
+            ImGuiProvider imGuiProvider,
+            GraphicsDeviceProvider graphicsDeviceProvider)
+            : base(window, imGuiProvider, graphicsDeviceProvider)
         {
         }
 
         private void HandleCreateNewMap()
         {
-            Hide();
             OnCreateNewMap?.Invoke(new GameMapFileHeader
             {
                 Name = filename,
@@ -36,15 +37,14 @@ namespace Castles.UI
 
         private void HandleCancelNewMap()
         {
-            Hide();
             OnCancelNewMap?.Invoke();
         }
 
-        protected override void Draw(float deltaSeconds)
+        public override void Draw(float deltaSeconds)
         {
             UpdateInput(deltaSeconds);
 
-            var windowSize = new Vector2(Window.Width, Window.Height);
+            var windowSize = new Vector2(window.Width, window.Height);
             var menuSize = new Vector2(400, 600);
             var menuPadding = 40f;
             var buttonSize = new Vector2((menuSize.X / 2), 32);
@@ -52,7 +52,7 @@ namespace Castles.UI
 
             var menuPos = (windowSize - menuSize) / 2;
             ImGui.SetNextWindowPos(menuPos);
-            ImGui.PushFont(Fonts[FontSize.Medium].Value);
+            ImGui.PushFont(imGuiProvider.Fonts[FontSize.Medium].Value);
 
             if (ImGui.Begin("Main Menu",
                 ImGuiWindowFlags.NoTitleBar |

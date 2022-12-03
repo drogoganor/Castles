@@ -9,19 +9,15 @@ namespace Castles.UI
 {
     public class InGameMenu : Menu
     {
-        private readonly IApplicationWindow window;
-        private readonly ImGuiProvider imGuiProvider;
-
         public event Action OnEndGame;
         public event Action OnReturnToGame;
 
         public InGameMenu(
             IApplicationWindow window,
             ImGuiProvider imGuiProvider,
-            GraphicsDeviceProvider graphicsDeviceProvider) : base(window, imGuiProvider, graphicsDeviceProvider)
+            GraphicsDeviceProvider graphicsDeviceProvider)
+            : base(window, imGuiProvider, graphicsDeviceProvider)
         {
-            this.imGuiProvider = imGuiProvider;
-            this.window = window;
         }
 
         private void HandleEndGame()

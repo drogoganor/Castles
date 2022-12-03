@@ -9,7 +9,6 @@ namespace Castles.Shaders
 {
     public class ColorShader : Shader
     {
-        private GraphicsDeviceProvider graphicsDeviceProvider;
         public DeviceBuffer ProjectionBuffer { get; private set; }
         public DeviceBuffer ViewBuffer { get; private set; }
         public DeviceBuffer WorldBuffer { get; private set; }
@@ -18,14 +17,13 @@ namespace Castles.Shaders
         public ResourceSet ProjectionViewSet { get; private set; }
         public ResourceSet WorldTextureSet { get; private set; }
 
-        public ColorShader(IApplicationWindow window,
-            GraphicsDeviceProvider graphicsDeviceProvider,
-            GameResourcesProvider gameResourcesProvider) : base(window, graphicsDeviceProvider)
+        public ColorShader(
+            IApplicationWindow window,
+            GraphicsDeviceProvider graphicsDeviceProvider)
+            : base(window, graphicsDeviceProvider)
         {
-        }
+            var factory = graphicsDeviceProvider.ResourceFactory;
 
-        protected override void CreateResources(ResourceFactory factory)
-        {
             ProjectionBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
             ViewBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
             WorldBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));

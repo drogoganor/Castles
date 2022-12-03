@@ -17,6 +17,11 @@ namespace Castles.Render
         private readonly VertexPositionTexture2D[] vertices;
         private readonly DeviceBuffer vertexBuffer;
 
+        /// <summary>
+        /// Hack to clear color on screens that don't incoporate any menus
+        /// </summary>
+        public bool ClearColor { get; set; } = true;
+
         public Scene(
             IApplicationWindow window,
             GraphicsDeviceProvider graphicsDeviceProvider,
@@ -72,6 +77,12 @@ namespace Castles.Render
             cl.UpdateBuffer(textureShader.WorldBuffer, 0, Matrix4x4.CreateTranslation(new Vector3(0, 0, -2)));
 
             cl.SetFramebuffer(graphicsDeviceProvider.GraphicsDevice.MainSwapchain.Framebuffer);
+
+            if (ClearColor)
+            {
+                cl.ClearColorTarget(0, RgbaFloat.Black);
+            }
+
             cl.ClearDepthStencil(1f);
             cl.SetPipeline(textureShader.Pipeline);
             cl.SetVertexBuffer(0, vertexBuffer);

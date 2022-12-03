@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Castles.Screens;
+using Castles.UI;
 
 namespace Castles.Game
 {
@@ -8,6 +10,36 @@ namespace Castles.Game
         {
             builder
                 .RegisterType<GameClient>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<MainMenu>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<InGameMenu>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<InGameScreen>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<InGameMenuScreen>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder
+                .RegisterType<MainMenuScreen>()
                 .AsSelf()
                 .AsImplementedInterfaces()
                 .SingleInstance();
